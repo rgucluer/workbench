@@ -1,0 +1,34 @@
+---
+- hosts: all
+  become: true
+
+  tasks:
+    - name: hash -r
+      shell: hash -r
+
+    - name: symlink python
+      raw: |
+        if [ ! -f /usr/bin/python3 ]; then 
+          ln --symbolic python3.10 /usr/bin/python3;
+        fi
+      become: true
+
+    - name: symlink python
+      raw: |
+        if [ ! -f /usr/bin/python ]; then 
+          ln --symbolic python3.10 /usr/bin/python;
+        fi
+      become: true
+
+    - name: Install pip3
+      apt:
+        name: python3-pip
+        state: latest
+        update_cache: true
+
+    - name: Install requests python package
+      ansible.builtin.pip:
+        name: requests
+
+  vars:
+    ansible_python_interpreter: /usr/bin/python3.10

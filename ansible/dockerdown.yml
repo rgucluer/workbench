@@ -1,0 +1,9 @@
+---
+- hosts: all
+  become: true
+
+  tasks:
+    - name: docker compose down
+      shell: "docker compose down"
+      args:
+        chdir: /home/{{ ansible_user }}/{{ docker_directory }}

@@ -1,2 +1,2 @@
-# workbench
-Development environment using Vagrant, libvirt, Qemu, Docker and Ansible.
+# Dswebdocs workbench
+Development environment using Vagrant, Libvirt, Qemu, Docker, Git and Ansible.

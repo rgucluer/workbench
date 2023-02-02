@@ -1,0 +1,104 @@
+---
+- hosts: all
+  become: true
+
+  tasks:
+    - name: Install aptitude
+      apt:
+        name: aptitude
+        state: latest
+        update_cache: true
+
+    - name: Remove docker package
+      apt:
+        name: docker
+        state: absent
+        update_cache: true
+
+    - name: Remove docker-engine package
+      apt:
+        name: docker-engine
+        state: absent
+        update_cache: true
+
+    - name: Remove docker.io package
+      apt:
+        name: docker.io
+        state: absent
+        update_cache: true
+
+    - name: Remove containerd package
+      apt:
+        name: containerd
+        state: absent
+        update_cache: true
+
+    - name: Remove runc package
+      apt:
+        name: runc
+        state: absent
+        update_cache: true
+
+    - name: Update apt-get repo and cache
+      apt: 
+        update_cache: yes 
+        force_apt_get: no 
+        cache_valid_time: 3600
+
+    - name: Install required system packages
+      apt:
+        pkg:
+          # - apt-transport-https 
+          - ca-certificates
+          - curl
+          - gnupg
+          - lsb-release
+          # - software-properties-common
+        state: latest
+        update_cache: true
+
+    - name: Add Docker GPG apt Key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker Repository
+      apt_repository:
+        repo: deb https://download.docker.com/linux/ubuntu jammy stable
+        state: present
+
+    - name: Update apt and install docker-ce
+      apt:
+        name: docker-ce
+        state: latest
+        update_cache: true
+
+    - name: Update apt and install docker-ce-cli
+      apt:
+        name: docker-ce-cli
+        state: latest
+        update_cache: true
+
+    - name: Update apt and install containerd.io
+      apt:
+        name: containerd.io
+        state: latest
+        update_cache: true
+
+    - name: Update apt and install docker-compose-plugin
+      apt:
+        name: docker-compose-plugin
+        state: latest
+        update_cache: true
+
+    - name: Ensure group 'docker' exists
+      group:
+        name: docker
+        state: present
+
+    - name: Add the user () with a bash shell, appending the group 'docker' to the user's groups
+      ansible.builtin.user:
+        name: "{{ ansible_user }}"
+        shell: /bin/bash
+        groups: docker
+        append: yes

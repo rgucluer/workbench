@@ -1,0 +1,34 @@
+---
+- hosts: all
+  become: true
+
+  tasks:
+    - name: Build nginx image
+      community.docker.docker_image:
+        name: "{{ docker_nginx_image_name }}"
+        build:
+          dockerfile: Dockerfile
+          path: /home/{{ ansible_user }}/{{ docker_directory }}/{{ nginx_directory_name }}
+          args:
+            log_volume: /var/log/nginx
+            chdir: /home/{{ ansible_user }}/{{ docker_directory }}
+          nocache: true
+        state: present
+        repository: "{{ docker_nginx_image_name }}:{{ docker_nginx_image_version }}"
+        source: build
+        push: false
+
+    - name: Build nginx image
+      community.docker.docker_image:
+        name: "{{ docker_nginx_image_name_2 }}"
+        build:
+          dockerfile: Dockerfile
+          path: /home/{{ ansible_user }}/{{ docker_directory }}/{{ nginx_directory_name_2 }}
+          args:
+            log_volume: /var/log/nginx
+            chdir: /home/{{ ansible_user }}/{{ docker_directory }}
+          nocache: true
+        state: present
+        repository: "{{ docker_nginx_image_name_2 }}:{{ docker_nginx_image_version_2 }}"
+        source: build
+        push: false
