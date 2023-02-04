@@ -14,7 +14,8 @@ Requirements:
 
 # Installation steps for Controller PC development environment:
 
-Controller PC: Physical PC (Vagrant Host, Ansible Controller, Developer PC) .
+Controller PC: Physical PC (Vagrant Host, Ansible Controller, Developer PC).
+
 Vagrant VM: The virtual machine created by Vagrant.
 
 ## Install git
@@ -248,6 +249,7 @@ ansible-playbook pythonpip.yml -l development -i inventory --ask-become-pass
 This creates a symlink for python3.10, installs python3-pip apt package, and installs requests python module on Vagrant VM.
 
 ## Deploy two static sites on Vagrant VM
+```bash
 cd ~/dswebdocs/workbench/vagrant
 vagrant halt
 vagrant up
@@ -255,9 +257,11 @@ vagrant up
 cd ~/dswebdocs/workbench/ansible
 ansible-playbook dockerbuild.yml -l development -i inventory --ask-become-pass  -vvv
 ansible-playbook dockerup.yml -l development -i inventory --ask-become-pass  -vvv
+```
 
 ## Open sites on a web browser
 Open a web browser, and visit the following addresses.
-http://site1.local/
-http://site2.local/
 
+http://site1.local/
+
+http://site2.local/
