@@ -250,10 +250,6 @@ This creates a symlink for python3.10, installs python3-pip apt package, and ins
 
 ## Deploy two static sites on Vagrant VM
 ```bash
-cd ~/dswebdocs/workbench/vagrant
-vagrant halt
-vagrant up
-
 cd ~/dswebdocs/workbench/ansible
 ansible-playbook dockerbuild.yml -l development -i inventory --ask-become-pass  -vvv
 ansible-playbook dockerup.yml -l development -i inventory --ask-become-pass  -vvv
