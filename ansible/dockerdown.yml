@@ -4,6 +4,6 @@
 
   tasks:
     - name: docker compose down
-      shell: "docker compose down"
+      shell: "docker compose down --volumes"
       args:
         chdir: /home/{{ ansible_user }}/{{ docker_directory }}
