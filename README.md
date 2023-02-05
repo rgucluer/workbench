@@ -105,6 +105,9 @@ Will ask "Are you sure you want to continue connecting (yes/no/[fingerprint])?" 
 ssh vagrant@<IP Address>
 ```
 
+If you set a passphraze for your ssh key, it may ask for the passphraze.
+( It won't ask for a passphraze if you add your ssh key beforehand to ssh-agent. )
+
 Now, we are in the Vagrant VM. Let's list the current directory.
 
 ![vagrant pwd](docs/images/vagrant_pwd.png)
