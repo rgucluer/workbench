@@ -1,0 +1,23 @@
+---
+# vars file for dswebdocs vagrant
+
+# Vagrant version to install
+vagrant_version: "2.3.7*"
+ansible_python_interpreter: /usr/bin/python3
+plugins_to_install:
+  - "vagrant-libvirt"
+  - "vagrant-mutate"
+plugins_installed: []
+plugins_installed_with_version: []
+plugins_installed_names_only: []
+plugin_name: ""
+missing_plugins: []
+os_environment:
+  - key: VAGRANT_DEFAULT_PROVIDER
+    value: libvirt
+    # value: virtualbox
+    # value: vmware_desktop
+    # value: docker
+    # value: hyperv
+
+

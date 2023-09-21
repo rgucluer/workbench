@@ -1,16 +1,23 @@
 ---
 - hosts: all
-  become: true
-    
+  become: false
+  gather_facts: yes
+  
   tasks:
     - name: Copy files with rsync
       ansible.posix.synchronize:
-        src: '{{ docker_directory_full_path }}'
-        dest: '/home/{{ ansible_user }}/{{ docker_directory }}'
-        dest_port: '{{ ssh_port }}'
-        delete: yes
+        archive: false
+        delete: true
+        dirs: false
+        recursive: true
+        group: false
+        owner: false
         mode: push
+        times: true
+        verify_host: true
         private_key: '{{ ansible_ssh_private_key_file }}'
-        recursive: yes
-        archive: yes
+        set_remote_user: true
+        src: '{{ workbench_full_path }}/dockerfiles'
+        dest: '/home/{{ ansible_user }}'
+        dest_port: '{{ ansible_port }}'
         rsync_timeout: 600

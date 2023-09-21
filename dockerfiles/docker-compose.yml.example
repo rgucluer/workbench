@@ -1,0 +1,124 @@
+version: '3.9'
+
+volumes:
+  site1vol:
+  site2vol:
+
+services:
+  proxy-service:
+    image: jwilder/nginx-proxy
+    container_name: reverseproxy
+    restart: always
+    ports:
+      - '80:80'
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+    networks:
+      - net-group-first
+      - net-group-second
+
+  site1nginx-development:
+    profiles: ["development"]
+    env_file:
+      - ./nginx1-development.env
+    build:
+      context: "./${APP_FOLDER}"
+      dockerfile: Dockerfile
+      args:
+        virtual_host: "${VIRTUAL_HOST}"
+    image: nginximg:1.23
+    container_name: container-site1
+    restart: unless-stopped
+    tty: true
+    expose:
+      - 80
+    volumes:
+      - site1vol:/var/log/nginx
+      - type: bind
+        source: /home/vagrant/dockerfiles/site1/data/www
+        target: /usr/share/nginx/html
+      - type: bind
+        source: /home/vagrant/dockerfiles/site1/data/images
+        target: /usr/share/nginx/images
+    networks:
+      - net-group-first
+    depends_on:
+      - proxy-service
+
+  site1nginx-production:
+    profiles: ["production"]
+    env_file:
+      - ./nginx1-production.env
+    build:
+      context: "./${APP_FOLDER}"
+      dockerfile: Dockerfile
+      args:
+        virtual_host: "${VIRTUAL_HOST}"
+    image: nginximg:1.23
+    container_name: container-site1
+    restart: unless-stopped
+    tty: true
+    expose:
+      - 80
+    volumes:
+      - site1vol:/var/log/nginx
+    networks:
+      - net-group-first
+    depends_on:
+      - proxy-service
+
+  site2nginx-development:
+    profiles: ["development"]
+    env_file:
+      - ./nginx2-development.env
+    build:
+      context: "./${APP_FOLDER}"
+      dockerfile: Dockerfile
+      args:
+        virtual_host: "${VIRTUAL_HOST}"
+    image: nginximg2:1.23
+    container_name: container-site2
+    restart: unless-stopped
+    tty: true
+    expose:
+      - 80
+    volumes:
+      - site2vol:/var/log/nginx
+      - type: bind
+        source: /home/vagrant/dockerfiles/site2/data/www
+        target: /usr/share/nginx/html
+      - type: bind
+        source: /home/vagrant/dockerfiles/site2/data/images
+        target: /usr/share/nginx/images
+    networks:
+      - net-group-second
+    depends_on:
+      - proxy-service
+
+  site2nginx-production:
+    profiles: ["production"]
+    env_file:
+      - ./nginx2-production.env
+    build:
+      context: "./${APP_FOLDER}"
+      dockerfile: Dockerfile
+      args:
+        virtual_host: "${VIRTUAL_HOST}"
+    image: nginximg2:1.23
+    container_name: container-site2
+    restart: unless-stopped
+    tty: true
+    expose:
+      - 80
+    volumes:
+      - site2vol:/var/log/nginx
+    networks:
+      - net-group-second
+    depends_on:
+      - proxy-service
+
+networks:
+  default:
+    name: nginx-proxy
+  net-group-first:
+  net-group-second:

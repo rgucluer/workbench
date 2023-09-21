@@ -1,9 +1,29 @@
+# Vagrant
 vagrant/.vagrant/
-self_docs/
+vagrant/Vagrantfile
+
+# Ansible
+ansible/inventory
 
 # Logs
 logs
 *.log
+
+# environment files
+.env
+.env.test
+*-development.env
+*-production.env
+
+# Docker
+dockerfiles/docker-compose.yml
+dockerfiles/nginx1-development.env
+dockerfiles/nginx1-production.env
+dockerfiles/nginx2-development.env
+dockerfiles/nginx2-production.env
+
+# Documents for private use
+self_docs/
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
@@ -18,6 +38,5 @@ typings/
 # TypeScript cache
 *.tsbuildinfo
 
-# dotenv environment variables file
-.env
-.env.test
+# Visual Studio Code
+.vscode/

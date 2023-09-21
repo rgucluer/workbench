@@ -1,0 +1,38 @@
+---
+# Create python links, and install requests Python package
+- import_tasks: pythonrequests.yml
+  become: true
+  when:
+    - ansible_facts['distribution'] == "Ubuntu" or ansible_facts['distribution'] == "Pop!_OS"
+    - ansible_facts['distribution_version'] == "22.04"
+
+# Install vagrant
+- import_tasks: install.yml
+  become: true
+  when: 
+    - ansible_facts['distribution'] == "Ubuntu" or ansible_facts['distribution'] == "Pop!_OS"
+    - ansible_facts['distribution_version'] == "22.04"
+
+- include_tasks: copy_single_config_file.yml
+  loop: "{{files_to_check}}"
+  loop_control:
+    loop_var: config_item
+  vars:
+    files_to_check:
+      - target: "vagrant/Vagrantfile"
+        source: "vagrant/Vagrantfile.example"
+      - target: "dockerfiles/docker-compose.yml"
+        source: "dockerfiles/docker-compose.yml.example"
+      - target: "dockerfiles/nginx1-development.env"
+        source: "dockerfiles/nginx1.env.example"
+      - target: "dockerfiles/nginx1-production.env"
+        source: "dockerfiles/nginx1.env.example"
+      - target: "dockerfiles/nginx2-development.env"
+        source: "dockerfiles/nginx2.env.example"
+      - target: "dockerfiles/nginx2-production.env"
+        source: "dockerfiles/nginx2.env.example"
+      - target: "dockerfiles/.env"
+        source: "dockerfiles/.env.example"
+  when:
+    - ansible_facts['distribution'] == "Ubuntu" or ansible_facts['distribution'] == "Pop!_OS"
+    - ansible_facts['distribution_version'] == "22.04"

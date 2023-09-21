@@ -1,98 +1,118 @@
 ---
 - hosts: all
   become: true
+  gather_facts: yes
 
   tasks:
+    # - name: hash -r
+    #   shell: hash -r
+
+    - name: symlink python
+      raw: |
+        if [ ! -f /usr/bin/python3 ]; then 
+          ln --symbolic python3.10 /usr/bin/python3;
+        fi
+      become: true
+
+    - name: symlink python
+      raw: |
+        if [ ! -f /usr/bin/python ]; then 
+          ln --symbolic python3.10 /usr/bin/python;
+        fi
+      become: true
+
+    - name: Install requests Python package
+      ansible.builtin.pip:
+        name: requests
+
     - name: Install aptitude
-      apt:
+      ansible.builtin.apt:
         name: aptitude
         state: latest
         update_cache: true
 
+    - name: Update apt repo and cache
+      ansible.builtin.apt: 
+        update_cache: yes
+        force_apt_get: no
+        cache_valid_time: 3600
+
+    - name: Install required system packages
+      ansible.builtin.apt:
+        pkg:
+          - apt-transport-https 
+          - ca-certificates
+          - curl
+          - software-properties-common
+          - gnupg
+          - lsb-release
+        state: latest
+        update_cache: true
+
     - name: Remove docker package
-      apt:
+      ansible.builtin.apt:
         name: docker
         state: absent
         update_cache: true
 
     - name: Remove docker-engine package
-      apt:
+      ansible.builtin.apt:
         name: docker-engine
         state: absent
         update_cache: true
 
     - name: Remove docker.io package
-      apt:
+      ansible.builtin.apt:
         name: docker.io
         state: absent
         update_cache: true
 
     - name: Remove containerd package
-      apt:
+      ansible.builtin.apt:
         name: containerd
         state: absent
         update_cache: true
 
     - name: Remove runc package
-      apt:
+      ansible.builtin.apt:
         name: runc
         state: absent
         update_cache: true
 
-    - name: Update apt-get repo and cache
-      apt: 
-        update_cache: yes 
-        force_apt_get: no 
-        cache_valid_time: 3600
-
-    - name: Install required system packages
-      apt:
-        pkg:
-          # - apt-transport-https 
-          - ca-certificates
-          - curl
-          - gnupg
-          - lsb-release
-          # - software-properties-common
-        state: latest
-        update_cache: true
-
     - name: Add Docker GPG apt Key
-      apt_key:
+      ansible.builtin.apt_key:
         url: https://download.docker.com/linux/ubuntu/gpg
         state: present
 
     - name: Add Docker Repository
-      apt_repository:
+      ansible.builtin.apt_repository:
         repo: deb https://download.docker.com/linux/ubuntu jammy stable
         state: present
 
-    - name: Update apt and install docker-ce
-      apt:
+    - name: Install docker-ce
+      ansible.builtin.apt:
         name: docker-ce
         state: latest
         update_cache: true
 
-    - name: Update apt and install docker-ce-cli
-      apt:
+    - name: Install docker-ce-cli
+      ansible.builtin.apt:
         name: docker-ce-cli
         state: latest
         update_cache: true
 
-    - name: Update apt and install containerd.io
-      apt:
+    - name: Install containerd.io
+      ansible.builtin.apt:
         name: containerd.io
         state: latest
         update_cache: true
 
-    - name: Update apt and install docker-compose-plugin
-      apt:
-        name: docker-compose-plugin
-        state: latest
-        update_cache: true
+    - name: Install Docker Module for Python
+      pip:
+        name: docker
 
     - name: Ensure group 'docker' exists
-      group:
+      ansible.builtin.group:
         name: docker
         state: present
 
