@@ -9,10 +9,10 @@
         name: "{{ docker_nginx_image_name }}"
         build:
           dockerfile: Dockerfile
-          path: /home/{{ ansible_user }}/dockerfiles/{{ nginx_directory_name }}
+          path: /home/{{ ansible_user }}/{{ dockerfiles }}/{{ nginx_directory_name }}
           args:
             log_volume: /var/log/nginx
-            chdir: /home/{{ ansible_user }}/dockerfiles
+            chdir: /home/{{ ansible_user }}/{{ dockerfiles }}
           nocache: true
         state: present
         repository: "{{ docker_nginx_image_name }}:{{ docker_nginx_image_version }}"
@@ -24,10 +24,10 @@
         name: "{{ docker_nginx_image_name_2 }}"
         build:
           dockerfile: Dockerfile
-          path: /home/{{ ansible_user }}/dockerfiles/{{ nginx_directory_name_2 }}
+          path: /home/{{ ansible_user }}/{{ dockerfiles }}/{{ nginx_directory_name_2 }}
           args:
             log_volume: /var/log/nginx
-            chdir: /home/{{ ansible_user }}/dockerfiles
+            chdir: /home/{{ ansible_user }}/{{ dockerfiles }}
           nocache: true
         state: present
         repository: "{{ docker_nginx_image_name_2 }}:{{ docker_nginx_image_version_2 }}"

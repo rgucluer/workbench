@@ -10,17 +10,11 @@ logs
 *.log
 
 # environment files
-.env
-.env.test
-*-development.env
-*-production.env
+**/.env
+**/*.env
 
 # Docker
-dockerfiles/docker-compose.yml
-dockerfiles/nginx1-development.env
-dockerfiles/nginx1-production.env
-dockerfiles/nginx2-development.env
-dockerfiles/nginx2-production.env
+**/docker-compose.yml
 
 # Documents for private use
 self_docs/

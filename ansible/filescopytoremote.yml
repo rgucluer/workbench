@@ -17,7 +17,7 @@
         verify_host: true
         private_key: '{{ ansible_ssh_private_key_file }}'
         set_remote_user: true
-        src: '{{ workbench_full_path }}/dockerfiles'
+        src: '{{ workbench_full_path }}/{{ dockerfiles }}'
         dest: '/home/{{ ansible_user }}'
         dest_port: '{{ ansible_port }}'
         rsync_timeout: 600

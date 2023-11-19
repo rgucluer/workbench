@@ -318,11 +318,9 @@ vagrant rsync-auto
 ### Edit a source file
 Related source files are in:
 ~/<local_workspace>/<local_project_dir>/dockerfiles/site1/data
-  - images directory
   - www directory
 
 ~/<local_workspace>/<local_project_dir>/dockerfiles/site2/data
-  - images directory
   - www directory
 
 Edit ~/<local_workspace>/<local_project_dir>/dockerfiles/site1/data/www/index.html file with a text editor , make some changes in content, and save the file. Open a web browser, and go to: 'http://<local_domain_name_1>' .

@@ -155,12 +155,6 @@ production1:
   ansible_ssh_private_key_file: ~/.ssh/<prod_ssh_key>
 ```
 
-Enter full path for workbench directory.
-
-```yaml
-workbench_full_path: /home/<server_user>/<local_workspace>/<local_project_dir>
-```
-
 ## Docker Compose Settings
 
 Development and production environments differ in storage settings. Development environment uses Docker bind mounts. Bind mounts enable transfer of file changes to the related Docker container. In production this is not needed, also include security risks.
@@ -185,7 +179,7 @@ VIRTUAL_HOST="example.com"
 ~/<local_workspace>/<local_project_dir>/dockerfiles/nginx2-production.env
 ```bash
 APP_FOLDER="site2"
-VIRTUAL_HOST="demo.example.com"
+VIRTUAL_HOST="example2.com"
 ```
 
 ## Install Docker on Production Server
@@ -242,11 +236,9 @@ These pages must run without problem at this point. Let's modify the index.html 
 ## Edit a source file
 Related source files are in:
 ~/<local_workspace>/<local_project_dir>/dockerfiles/site1/data
-  - images directory
   - www directory
 
 ~/<local_workspace>/<local_project_dir>/dockerfiles/site2/data
-  - images directory
   - www directory
 
 Edit ~/<local_workspace>/<local_project_dir>/dockerfiles/site1/data/www/index.html file with a text editor , make some changes in content, and save the file. 
@@ -259,6 +251,9 @@ In production environment, we must do the following to update production server.
   - Run docker containers with new docker images.
 
 All of these steps are defined in ansible/dockerrefresh.yml playbook. 
+
+*** Warning: Backup first ***
+*** Warning: this step will stop all the containers, and delete all the volumes of those containers. Backup up first, or edit dockerrefresh.yml***
 
 Run dockerrefresh.yml playbook
 ```bash
