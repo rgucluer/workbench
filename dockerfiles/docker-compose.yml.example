@@ -85,11 +85,11 @@ services:
     volumes:
       - site2vol:/var/log/nginx
       - type: bind
-        source: /home/vagrant/dockerfiles/site2/data/www
-        target: /usr/share/nginx/html
+        source: "/home/vagrant/${DOCKER_FILES}/site2/data/www"
+        target: "/usr/share/nginx/html"
       - type: bind
-        source: /home/vagrant/dockerfiles/site2/data/images
-        target: /usr/share/nginx/images
+        source: "/home/vagrant/${DOCKER_FILES}/site2/data/images"
+        target: "/usr/share/nginx/images"
     networks:
       - net-group-second
     depends_on:
