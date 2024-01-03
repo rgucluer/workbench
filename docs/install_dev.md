@@ -109,6 +109,17 @@ cd ~/<local_workspace>/<local_project_dir>/ansible
 cp inventory.example inventory
 ```
 
+## Edit Ansible inventory file 
+
+~/<local_workspace>/<local_project_dir>/ansible/inventory
+
+Enter full path for workbench directory.
+
+```yaml
+workbench_full_path: /home/<local_user>/<local_workspace>/<local_project_dir>
+```
+
+
 Current user must have sudo privileges.
 
 The following commands will install Vagrant, Qemu, libvirt, virt-manager, and related other packages.
@@ -221,11 +232,6 @@ development:
   ansible_ssh_private_key_file: ~/.ssh/<vagrant_ssh_key>
 ```
 
-Enter full path for workbench directory.
-
-```yaml
-workbench_full_path: /home/<local_user>/<local_workspace>/<local_project_dir>
-```
 
 ## Docker Compose Settings
 
