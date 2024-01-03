@@ -2,7 +2,7 @@
 # vars file for dswebdocs vagrant
 
 # Vagrant version to install
-vagrant_version: "2.3.7*"
+vagrant_version: "2.4.0*"
 ansible_python_interpreter: /usr/bin/python3
 plugins_to_install:
   - "vagrant-libvirt"
