@@ -28,7 +28,7 @@
     - name: docker compose down --volumes
       shell: "docker compose down --volumes"
       args:
-        chdir: /home/{{ ansible_user }}/{{ dockerfiles }}
+        chdir: /home/{{ ansible_user }}/dockerfiles
       ignore_errors: true
 
     - name: Remove image
@@ -72,7 +72,7 @@
         verify_host: true
         private_key: '{{ ansible_ssh_private_key_file }}'
         set_remote_user: true
-        src: '{{ workbench_full_path }}/{{ dockerfiles }}'
+        src: '{{ workbench_full_path }}/dockerfiles'
         dest: '/home/{{ ansible_user }}'
         dest_port: '{{ ansible_port }}'
         rsync_timeout: 600
@@ -82,10 +82,10 @@
         name: "{{ docker_nginx_image_name }}"
         build:
           dockerfile: Dockerfile
-          path: /home/{{ ansible_user }}/{{ dockerfiles }}/{{ nginx_directory_name }}
+          path: /home/{{ ansible_user }}/dockerfiles/{{ nginx_directory_name }}
           args:
             log_volume: /var/log/nginx
-            chdir: /home/{{ ansible_user }}/{{ dockerfiles }}
+            chdir: /home/{{ ansible_user }}/dockerfiles
         state: present
         repository: "{{ docker_nginx_image_name }}:{{ docker_nginx_image_version }}"
         source: build
@@ -96,10 +96,10 @@
         name: "{{ docker_nginx_image_name_2 }}"
         build:
           dockerfile: Dockerfile
-          path: /home/{{ ansible_user }}/{{ dockerfiles }}/{{ nginx_directory_name_2 }}
+          path: /home/{{ ansible_user }}/dockerfiles/{{ nginx_directory_name_2 }}
           args:
             log_volume: /var/log/nginx
-            chdir: /home/{{ ansible_user }}/{{ dockerfiles }}
+            chdir: /home/{{ ansible_user }}/dockerfiles
         state: present
         repository: "{{ docker_nginx_image_name_2 }}:{{ docker_nginx_image_version_2 }}"
         source: build
@@ -108,4 +108,4 @@
     - name: docker compose up
       shell: "docker compose up --detach"
       args:
-        chdir: /home/{{ ansible_user }}/{{ dockerfiles }}
+        chdir: /home/{{ ansible_user }}/dockerfiles
