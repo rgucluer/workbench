@@ -353,17 +353,19 @@ vagrant halt
 ### References:
 - Install Ubuntu on a VPS server
   - https://www.digitalocean.com/community/tutorials/initial-server-setup-with-ubuntu-22-04
-  - https://community.hetzner.com/tutorials/howto-initial-setup-ubuntu
+
 - Ansible:
   - https://github.com/ansible/ansible/tree/v2.14.0
   - https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html
   - https://www.ansible.com/overview/how-ansible-works
   - https://galaxy.ansible.com/geerlingguy/pip
   - https://www.digitalocean.com/community/tutorials/how-to-use-ansible-to-install-and-set-up-docker-on-ubuntu-22-04
+
 - Vagrant
   - https://www.vagrantup.com/downloads
   - https://ostechnix.com/install-and-configure-kvm-in-ubuntu-20-04-headless-server/
   - https://www.qemu.org/
   - https://virt-manager.org/
+
 - Git
   - https://github.com/git-guides/install-git

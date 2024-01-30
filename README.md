@@ -1,6 +1,6 @@
 # Dswebdocs Workbench
 
-Dswebdocs builds a development environment similar to a production server. A Vagrant VM creates a local development environment that mimics the production VPS(Virtual Private Server). Docker containers isolate running services inside VM/VPS. Ansible automates installation/management tasks.
+Dswebdocs Workbench builds a development environment similar to a production server. A Vagrant VM creates a local development environment that mimics the production VPS(Virtual Private Server). Docker containers isolate running services inside VM/VPS. Ansible automates installation/management tasks.
 
 
 Developed on Pop!_OS, so these instructions will work on Ubuntu 22.04, and Pop!_OS 22.04 without problem(hopefully). Not tested on other systems at the moment.

@@ -80,8 +80,8 @@ ssh <server_user>@<server_ip> -p <server_ssh_port>
 ### On Server: Update apt packages
 Connect to server with ssh. Then,
 ```bash
-sudo apt-get update
-sudo apt-get upgrade
+sudo apt update
+sudo apt upgrade
 ```
 Reboot, if necessary.
 
@@ -92,7 +92,8 @@ Enabling two firewalls at the same time may cause some problems. Please follow y
 sudo ufw app list
 sudo ufw allow OpenSSH
 sudo ufw enable
-sudo ufw reboot
+sudo ufw reload
+sudo ufw status
 ```
 
 
@@ -138,15 +139,14 @@ production1:
 
 Enter ssh port.
 ```yaml
+production1:
   ansible_port: <server_ssh_port>
 ```
 
 Enter user name.
 ```yaml
-all:
-  hosts:
-    production1:
-      ansible_user: <server_user>
+production1:
+  ansible_user: <server_user>
 ```
 
 Enter ssh key filename and path for production environment.
@@ -170,14 +170,14 @@ COMPOSE_PROFILES="production"
 
 **Enter your domain address in nginx1-production.env**
 ~/<local_workspace>/<local_project_dir>/dockerfiles/nginx1-production.env
-```ini
+```yaml
 APP_FOLDER="site1"
 VIRTUAL_HOST="example.com"
 ```
 
 **Enter a second domain address in nginx2-production.env**
 ~/<local_workspace>/<local_project_dir>/dockerfiles/nginx2-production.env
-```bash
+```yaml
 APP_FOLDER="site2"
 VIRTUAL_HOST="example2.com"
 ```
@@ -222,6 +222,15 @@ ansible-playbook filescopytoremote.yml -l production1
 cd ~/<local_workspace>/<local_project_dir>/ansible
 ansible-playbook dockerbuild.yml -l production1
 ansible-playbook dockerup.yml -l production1
+```
+
+## Open Ports on Firewall for http and https
+
+```bash
+sudo ufw allow http
+sudo ufw allow https
+sudo ufw reload
+sudo ufw status
 ```
 
 ## Open sites on a web browser
@@ -272,7 +281,6 @@ You can refresh the page by pressing <kbd>SHIFT</kbd>+<kbd>F5</kbd> function key
 ## References:
 - Install Ubuntu on a VPS server
   - https://www.digitalocean.com/community/tutorials/initial-server-setup-with-ubuntu-22-04
-  - https://community.hetzner.com/tutorials/howto-initial-setup-ubuntu
 
 - Ansible:
   - https://github.com/ansible/ansible/tree/v2.14.0

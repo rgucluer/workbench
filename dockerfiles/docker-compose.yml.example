@@ -35,10 +35,10 @@ services:
     volumes:
       - site1vol:/var/log/nginx
       - type: bind
-        source: "/home/vagrant/${DOCKER_FILES}/site1/data/www"
+        source: "/home/vagrant/dockerfiles/site1/data/www"
         target: "/usr/share/nginx/html"
       - type: bind
-        source: "/home/vagrant/${DOCKER_FILES}/site1/data/images"
+        source: "/home/vagrant/dockerfiles/site1/data/images"
         target: "/usr/share/nginx/images"
     networks:
       - net-group-first
@@ -85,10 +85,10 @@ services:
     volumes:
       - site2vol:/var/log/nginx
       - type: bind
-        source: "/home/vagrant/${DOCKER_FILES}/site2/data/www"
+        source: "/home/vagrant/dockerfiles/site2/data/www"
         target: "/usr/share/nginx/html"
       - type: bind
-        source: "/home/vagrant/${DOCKER_FILES}/site2/data/images"
+        source: "/home/vagrant/dockerfiles/site2/data/images"
         target: "/usr/share/nginx/images"
     networks:
       - net-group-second
