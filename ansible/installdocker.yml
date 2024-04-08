@@ -21,21 +21,24 @@
         fi
       become: true
 
-    - name: Install requests Python package
-      ansible.builtin.pip:
-        name: requests
-
     - name: Install aptitude
       ansible.builtin.apt:
         name: aptitude
         state: latest
         update_cache: true
+      become_method: sudo
+      become_user: root
+      become: true
 
     - name: Update apt repo and cache
       ansible.builtin.apt: 
         update_cache: yes
         force_apt_get: no
         cache_valid_time: 3600
+
+    - name: Install requests Python package
+      ansible.builtin.pip:
+        name: requests
 
     - name: Install required system packages
       ansible.builtin.apt:
@@ -46,66 +49,100 @@
           - software-properties-common
           - gnupg
           - lsb-release
+          - lego
         state: latest
         update_cache: true
+      become_method: sudo
+      become_user: root
+      become: true
 
     - name: Remove docker package
       ansible.builtin.apt:
         name: docker
         state: absent
         update_cache: true
+      become_method: sudo
+      become_user: root
+      become: true
 
     - name: Remove docker-engine package
       ansible.builtin.apt:
         name: docker-engine
         state: absent
         update_cache: true
+      become_method: sudo
+      become_user: root
+      become: true
 
     - name: Remove docker.io package
       ansible.builtin.apt:
         name: docker.io
         state: absent
         update_cache: true
+      become_method: sudo
+      become_user: root
+      become: true
 
     - name: Remove containerd package
       ansible.builtin.apt:
         name: containerd
         state: absent
         update_cache: true
+      become_method: sudo
+      become_user: root
+      become: true
 
     - name: Remove runc package
       ansible.builtin.apt:
         name: runc
         state: absent
         update_cache: true
+      become_method: sudo
+      become_user: root
+      become: true
 
     - name: Add Docker GPG apt Key
       ansible.builtin.apt_key:
         url: https://download.docker.com/linux/ubuntu/gpg
         state: present
+      become_method: sudo
+      become_user: root
+      become: true
 
     - name: Add Docker Repository
       ansible.builtin.apt_repository:
         repo: deb https://download.docker.com/linux/ubuntu jammy stable
         state: present
+      become_method: sudo
+      become_user: root
+      become: true
 
     - name: Install docker-ce
       ansible.builtin.apt:
         name: docker-ce
         state: latest
         update_cache: true
+      become_method: sudo
+      become_user: root
+      become: true
 
     - name: Install docker-ce-cli
       ansible.builtin.apt:
         name: docker-ce-cli
         state: latest
         update_cache: true
+      become_method: sudo
+      become_user: root
+      become: true
 
     - name: Install containerd.io
       ansible.builtin.apt:
         name: containerd.io
         state: latest
         update_cache: true
+      become_method: sudo
+      become_user: root
+      become: true
 
     - name: Install Docker Module for Python
       pip:
@@ -115,6 +152,9 @@
       ansible.builtin.group:
         name: docker
         state: present
+      become_method: sudo
+      become_user: root
+      become: true
 
     - name: Add the user () with a bash shell, appending the group 'docker' to the user's groups
       ansible.builtin.user:
@@ -122,3 +162,6 @@
         shell: /bin/bash
         groups: docker
         append: yes
+      become_method: sudo
+      become_user: root
+      become: true

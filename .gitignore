@@ -1,17 +1,12 @@
-# Vagrant
-vagrant/.vagrant/
-vagrant/Vagrantfile
-
 # Ansible
 ansible/inventory
 
-# Logs
-logs
-*.log
+# Dependency directories
+node_modules/
+jspm_packages/
 
-# environment files
-**/.env
-**/*.env
+# Diagnostic reports (https://nodejs.org/api/report.html)
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
 # Docker
 **/docker-compose.yml
@@ -19,18 +14,33 @@ logs
 # Documents for private use
 self_docs/
 
-# Diagnostic reports (https://nodejs.org/api/report.html)
-report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
-
-# Dependency directories
-node_modules/
-jspm_packages/
-
-# TypeScript v1 declaration files
-typings/
+# Environment files
+**/.env
+**/*.env
 
 # TypeScript cache
 *.tsbuildinfo
 
+# TypeScript v1 declaration files
+typings/
+
+# Traefik
+dockerfiles/traefik/*traefik.yml
+dockerfiles/traefik/*dynamic.yml
+dockerfiles/traefik/*users.txt
+dockerfiles/traefik/storage/.lego/
+dockerfiles/traefik/storage/log/
+dockerfiles/traefik/storage/acme.json
+dockerfiles/traefik/storage/*_api_key.txt
+dockerfiles/traefik/log/*
+
+# Vagrant
+vagrant/.vagrant/
+vagrant/Vagrantfile
+
 # Visual Studio Code
 .vscode/
+
+# Logs
+logs
+*.log

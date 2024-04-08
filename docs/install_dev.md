@@ -1,50 +1,76 @@
-# Installation steps of development environment:
+# Installation of development environment:
 
 ## Requirements:
   - Operating System: Ubuntu 22.04, or Pop!_OS 22.04.
   - Virtualization enabled.
-
-Controller PC: Physical PC (Vagrant Host, Ansible Controller, Developer PC).
-
-Vagrant VM: The virtual machine created by Vagrant in Controller PC.
-
+  - Controller PC: Physical PC (Vagrant Host, Ansible Controller, Developer PC).
+  - Vagrant VM: The virtual machine created by Vagrant in Controller PC.
 
 ### Variables:
 - vagrant_ssh_key: devuser1
 - local_user: local1
   - The user of your Controller PC. (Local Development PC)
-- vagrant_vm_IP: 
+- vagrant_vm_IP:
   - Vagrant sets an IP address on the first run of the VM. 
-- local_workspace: dswebdocs
+- domain_name_1: demo1.myserver.com
+  - A domain name defined in /etc/hosts file.
+- domain_name_2: myserver.com
+  - A domain name defined in /etc/hosts file.
+- local_workspace: local_workspace
   - The directory to store software source code.
 - local_project_dir: workbench
   - This directory holds dswebdocs workbench project
-- local_domain_name_1: site1.local
-  - A domain name for local use. Defined in /etc/hosts file.
-- local_domain_name_2: site2.local
-  - A domain name for local use. Defined in /etc/hosts file.
 - workbench_directory: /home/<local_user>/<local_workspace>/<local_project_dir>
   - Variable holds the full path to dswebdocs workbench project.
+- compose_project_name: myproject
+- my_dns_provider: hetzner
+- my_dns_provider_dns_server_1_IP: 213.133.100.98
+- my_dns_provider_dns_server_2_IP: 88.198.229.192
 
-When you see these variables inside '< >' symbols through the document, enter the values valid for your setup.
+When you see these variables through the document , enter the values valid for your setup.
 
 ### Example:
 
 **Document:**
 ```bash
-ping <local_domain_name_1>
+ping <domain_name_1>
+or
+ping myserver.com
 ```
 
 **Use it as:**
 ```bash
-ping site1.local
+ping example.com
 ```
 
-## Install Ansible 
+## On Controller PC: Install Ansible 
+
+### Install Pip
+```bash
+cd ~
+wget https://bootstrap.pypa.io/get-pip.py
+python get-pip.py
+```
+
+**Add ~/.local/bin directory PATH variable**
+```bash
+nano ~/.bashrc
+```
+This will open .bashrc file. Add the following line, save & exit. Enter your system user name on Controller PC replacing <user_name> without angle brackets.
+```bash
+export PATH="$PATH:/home/<user_name>/.local/bin"
+```
+
+Reload settings:
+```bash
+source ~/.bashrc
+```
+
+### Install Ansible
 
 ```bash
-sudo apt-get update
-sudo apt-get install python3-pip -y
+python3 -m pip install -U pip setuptools
+python3 -m pip install -U pip requests
 python3 -m pip install --upgrade --user ansible
 ```
 
@@ -74,11 +100,13 @@ git clone  https://github.com/dswebdocs/workbench.git
 
 ~/<local_workspace>/<local_project_dir>/
   - ansible/inventory
-  - dockerfiles/.env
-  - dockerfiles/nginx1-development.env
-  - dockerfiles/nginx2-development.env
-  - dockerfiles/docker-compose.yml 
   - vagrant/Vagrantfile
+  - dockerfiles/.env
+  - dockerfiles/docker-compose.yml 
+  - dockerfiles/traefik/traefik.yml
+  - dockerfiles/traefik/dynamic.yml
+  - dockerfiles/traefik/my_dns_provider_api_key.txt
+  - dockerfiles/traefik/users.txt
 
 We will edit these files through the installation process.
 
@@ -101,15 +129,15 @@ Add ssh key to ssh agent:
 ssh-add ~/.ssh/<vagrant_ssh_key>
 ```
 
-## Install Vagrant
+## On Controller PC: Install Vagrant
 
-## Copy inventory.example file as inventory
+### Copy inventory.example file as inventory
 ```bash
 cd ~/<local_workspace>/<local_project_dir>/ansible
 cp inventory.example inventory
 ```
 
-## Edit Ansible inventory file 
+### Edit Ansible inventory file 
 
 ~/<local_workspace>/<local_project_dir>/ansible/inventory
 
@@ -119,7 +147,7 @@ Enter full path for workbench directory.
 workbench_full_path: /home/<local_user>/<local_workspace>/<local_project_dir>
 ```
 
-
+### Install Vagrant
 Current user must have sudo privileges.
 
 The following commands will install Vagrant, Qemu, libvirt, virt-manager, and related other packages.
@@ -130,17 +158,17 @@ ansible-playbook workbench.yml
 ```
 "BECOME password" is the password of the current system user.
 
-## Check Vagrantfile
+### Check Vagrantfile
 
 Open ~/<local_workspace>/<local_project_dir>/vagrant/Vagrantfile, and check for the following
 
 ```bash
 ssh_key_filename="<vagrant_ssh_key>"
 ```
-The value must be equal to the ssh key name we created in "Create a ssh key pair for workbench" step.
+The value must be equal to the ssh key name we created in "Create a ssh key pair for workbench" step ( devuser1 ).
 
 
-## Run Vagrant
+### Run Vagrant
 ```bash
 cd ~/<local_workspace>/<local_project_dir>/vagrant
 vagrant up
@@ -149,7 +177,8 @@ vagrant up
 
 Note the IP address in the output ( vagrant_vm_IP ) . We will use in the following steps.
 
-## Edit /etc/hosts file
+
+### Edit /etc/hosts file
 Add the following rows to the /etc/hosts file with a text editor. You must run the text editor with sudo privileges.
 ```bash
 sudo nano /etc/hosts
@@ -165,7 +194,8 @@ Add the following rows to the end of file.
 
 Web browser is directed to this virtual machine when we enter http://<local_domain_name_1> to the address bar.
 
-## Test Vagrant ssh login 
+
+### Test Vagrant ssh login 
 
 ```bash
 ssh vagrant@<vagrant_vm_IP>
@@ -186,7 +216,8 @@ Exit from ssh session, press <kbd>CTRL</kbd>+<kbd>D</kbd>.
 
 Now, we are back in Controller PC .
 
-## Start rsync-auto
+
+### Start rsync-auto
 
 Start Vagrant Virtual Machine (if not working):
 ```bash
@@ -205,21 +236,23 @@ rsync replicates changes from Ansible Controller to Vagrant VM.
 ~/<local_workspace>/<local_project_dir>/vagrant/Vagrantfile
 config.vm.synced_folder sets which directory to sync.
 
-## Stop rsync-auto
+
+### Stop rsync-auto
 Switch to the terminal runnig synch-auto. <kbd>CTRL</kbd>+<kbd>c</kbd> to stop rsync-auto .
 
-## Stop vagrant VM
+
+### Stop vagrant VM
 
 ```bash
 cd ~/<local_workspace>/<local_project_dir>/vagrant
 vagrant halt
 ```
 
-## Edit Ansible inventory file 
-~/<local_workspace>/<local_project_dir>/ansible/inventory
 
+## Edit Ansible inventory file 
 Enter IP address for ansible_host we noted at previous steps.
 
+~/<local_workspace>/<local_project_dir>/ansible/inventory
 ```yaml
 development:
   ansible_host: <vagrant_vm_IP>
@@ -239,29 +272,66 @@ Development and production environments differ in storage settings. Development 
 
 Docker Compose Profiles seperate development and production environments in docker-compose.yml.
 
-**Check the current environment**
-Check the current environment in ~/<local_workspace>/<local_project_dir>/dockerfiles/.env file . Uncomment development row, comment out production row.
-```bash
+
+### On Controller PC: Check the current environment
+
+Check the current environment in ~/<local_workspace>/<local_project_dir>/dockerfiles/.env file. Uncomment development row, comment out production row.
+```ini
 COMPOSE_PROFILES="development"
 # COMPOSE_PROFILES="production"
 ```
 
-**Enter your domain address in nginx1-development.env**
-~/<local_workspace>/<local_project_dir>/dockerfiles/nginx1-development.env
-```bash
-APP_FOLDER="site1"
-VIRTUAL_HOST="site1.local"
+### On Controller PC:
+**Enter your domain address in docker-compose.yml**
+~/<local_workspace>/<local_project_dir>/dockerfiles/docker-compose.yml
+```yaml
+services:
+  ...
+  reverse-proxy-development:
+    profiles: ["development"]
+    build:
+    ...
+      args:
+        virtual_host: "traefik.myserver.com"
+
+  app1-development:
+    profiles: ["development"]
+    build:
+    ...
+      args:
+        virtual_host: "demo1.myserver.com"
+    ...
+    labels:
+      traefik.enable: true
+      traefik.http.routers.app1-https.rule: "Host(`demo1.myserver.com`)"
+      traefik.http.routers.app1-https.entryPoints: "web-secure"
+      traefik.http.routers.app1-https.service: "app1-development-myproject"
+      traefik.http.routers.app1-https.tls.domains.main: "demo1.myserver.com"
 ```
 
-**Enter a second domain address in nginx2-development.env**
-~/<local_workspace>/<local_project_dir>/dockerfiles/nginx2-development.env
-```bash
-APP_FOLDER="site2"
-VIRTUAL_HOST="site2.local"
+
+**Enter a second domain address in docker-compose.yml**
+~/<local_workspace>/<local_project_dir>/dockerfiles/docker-compose.yml
+```yaml
+services:
+  ...
+
+  app2-development:
+    profiles: ["development"]
+    build:
+      ...
+      args:
+        virtual_host: "myserver.com"
+  ...
+  labels:
+    traefik.enable: true
+    traefik.http.routers.app2-https.rule: "Host(`myserver.com`)"
+    traefik.http.routers.app2-https.entryPoints: "web-secure"
+    traefik.http.routers.app2-https.service: "app2-development-myproject"
+    traefik.http.routers.app2-https.tls.domains.main: "myserver.com"
 ```
 
-
-## Install Docker on Vagrant VM 
+## On Controller PC: Install Docker on Vagrant VM 
 
 Add your ssh key to ssh agent
 ```bash
@@ -274,10 +344,10 @@ cd ~/<local_workspace>/<local_project_dir>/vagrant
 vagrant up
 ```
 
-Install Docker
+Run Ansible playbook
 ```bash
 cd ~/<local_workspace>/<local_project_dir>/ansible
-ansible-playbook installdocker.yml -l development
+ansible-playbook installdocker.yml -l development --become-user vagrant
 ```
 Will ask "BECOME password" for Vagrant VM user, enter "vagrant".
 Default password for vagrant user is "vagrant". We run Ansible commands on Controller PC, which make changes in Vagrant VM via a ssh connection.
@@ -295,25 +365,225 @@ docker run hello-world
 ```
 Press [CTRL] + [d] to end ssh session.
 
+### Obtain your API Key from your Service Provider
+- Read your Cloud provider's document and get your DNS API KEY
+  - https://doc.traefik.io/traefik/https/acme/#providers
 
-## Deploy two static sites on Vagrant VM
+Many lego environment variables can be overridden by their respective _FILE counterpart, which should have a filepath to a file that contains the secret as its value. 
+
+- Save the API key to a file.
+- Add this file to your .gitignore file
+
+
+## On Controller PC: Generate Letsencrypt certificates with Lego
 
 ```bash
-cd ~/<local_workspace>/<local_project_dir>/vagrant
-vagrant up
-cd ~/<local_workspace>/<local_project_dir>/ansible
-ansible-playbook dockerbuild.yml -l development
-ansible-playbook dockerup.yml -l development
+cd /path/to/workbench/dockerfiles/traefik/
+```
+Enter values that matches your setup.
+```bash
+HETZNER_API_KEY_FILE=my_dns_provider_api_key.txt \
+lego --email my_email@myserver.com  \
+--server=https://acme-staging-v02.api.letsencrypt.org/directory \
+--dns <my_dns_provider> \
+--accept-tos \
+--dns.resolvers "<my_dns_provider_dns_server_1>" \
+--dns.resolvers "<my_dns_provider_dns_server_2>" \
+--dns.resolvers "8.8.8.8:53" \
+--dns-timeout 60 \
+--domains *.myserver.com \
+--domains myserver.com \
+run
+```
+Terminal output:
+```bash
+Saved key to /path/to/workbench/dockerfiles/traefik/.lego/accounts/acme-v02.api.letsencrypt.org/my_email@myserver.com/keys/my_email@myserver.com.key
+
+2024/02/22 16:36:05 Please review the TOS at https://letsencrypt.org/documents/LE-SA-v1.3-September-21-2022.pdf
+Do you accept the TOS? Y/n
+```
+
+Y [ENTER]
+
+```bash
+2024/02/22 16:37:03 [INFO] acme: Registering account for my_email@myserver.com
+
+Your account credentials have been saved in your Let's Encrypt configuration directory at "/path/to/workbench/dockerfiles/traefik/.lego/accounts".
+
+You should make a secure backup of this folder now. This
+configuration directory will also contain certificates and
+private keys obtained from Let's Encrypt so making regular
+backups of this folder is ideal.
+```
+
+The certificate files must persist between docker sessions, rsync must not delete certificate files.
+
+Lego automaticaly updates certificates. But it will save the latest certificates to docker container storage. If these certificates are saved to development directory, we can prevent unnecassary certification renewals
+
+TODO: Automate downloading Letsencrypt Certificates to Controller PC. 
+  - Save new certificates from docker container to VPS dockerfiles directory.
+  - Download new certificates from docker container to Controller PC. 
+
+
+### Set related values in docker-compose.yml for traefik
+
+```yaml
+
+services:
+  reverse-proxy-development:
+    profiles: ["development"]
+    ...
+
+    # Add your DNS Auth. API keys here.
+    environment:
+      - "PROVIDER_API_KEY_FILE=/path/to/file/dns_api_key.txt"
+
+```
+
+### Set related values in traefik/traefik.yml
+```yaml
+providers:
+  docker:
+    ...
+
+    defaultRule: Host(`traefik.myserver.com:8080`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))
+    ...
+
+certificatesResolvers:
+  myresolver:
+    acme:
+      # caServer: https://acme-staging-v02.api.letsencrypt.org/directory
+      caServer: "https://acme-v02.api.letsencrypt.org/directory"
+      email: "my_email@myserver.com"
+      storage: "/traefik/storage/acme.json"
+
+      dnsChallenge:
+        # DNS Providers LEGO CLI flag name
+        # Detailed information : https://go-acme.github.io/lego/dns/
+        provider: "my_dns_provider"
+        delayBeforeCheck: "60"
+
+        # Use following DNS servers to resolve the FQDN authority.
+        resolvers:
+        - "<my_dns_provider_dns_server_1_IP>:53"
+        - "<my_dns_provider_dns_server_2_IP>:53"
+        - "1.1.1.1:53"
+        - "8.8.8.8:53"
+        disablePropagationCheck: false
+```
+
+### Set related values in traefik/dynamic.yml
+
+```yaml
+http:
+  routers:
+  ...
+
+    reverse-proxy-https:
+      rule: Host(`traefik.myserver.com`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))
+      entryPoints: "traefik"
+      service: "api@internal"
+      tls:
+        certResolver: myresolver
+        domains:
+          - main: "traefik.myserver.com"
+
+    ping-https:
+      rule: Host(`traefik.myserver.com`) && PathPrefix(`/ping`)
+      entryPoints: "ping"
+      service: ping@internal
+      tls:
+        certResolver: myresolver
+        domains:
+          - main: "traefik.myserver.com"
+
+tls:
+  ...
+
+  certificates:
+    - certFile: /traefik/storage/.lego/certificates/_.myserver.com.crt
+      keyFile: /traefik/storage/.lego/certificates/_.myserver.com.key
+  ...
+
+```
+
+### Add authentication to Traefik Dashboard
+
+Add an encrypted credential to dockerfiles/traefik/users.txt file
+
+```yaml
+cd <workbench_directory>/dockerfiles
+printf "<user_name>:$(openssl passwd -apr1 <enter_password>)\n" >> ./traefik/users.txt
+```
+
+Enter the user_name, and password as you wish. 
+
+
+dockerfiles/docker-compose.yml
+
+```yaml
+services:
+  reverse-proxy-development:
+    ...
+    volumes:
+    # User Credentials
+    - "./traefik/users.txt:/etc/traefik/users.txt"
+```
+
+dockerfiles/traefik/traefik.yml
+
+```yaml
+
+providers:
+  docker:
+    ...
+ 
+  file:
+    filename: /etc/traefik/dynamic.yml
+    watch: true
+
+entryPoints:
+  traefik:
+    address: ":8080"
+    http:
+      redirections:
+      ...
+
+      middlewares:
+        - auth@file
+```
+
+dockerfiles/traefik/dynamic.yml
+
+```yaml
+  middlewares:
+    auth:
+      basicAuth:
+        usersFile: "/etc/traefik/users.txt"
+```
+
+Now, lets rebuild the project.
+```yaml
+cd <workbench_directory>/ansible
+ansible-playbook dockerrebuild.yml -l development --become-user vagrant
 ```
 
 Will ask "BECOME password" for Vagrant VM user, enter "vagrant".
 
+
 ### Open sites on a web browser
 Open a web browser, and visit the following addresses.
 
-http://<local_domain_name_1>/
+http://<domain_name_1>
 
-http://<local_domain_name_2>/
+http://<domain_name_2>
+
+http://traefik.<domain_name_1>:8082/ping
+
+https://traefik.<domain_name_1>:8080/dashboard/
+( The last slash is important , do not omit it. )
+
+These pages must run without problem at this point. Let's modify the index.html , and update the sites.
 
 ### Run rsync-auto
 Open a new terminal, start rsync-auto.
@@ -321,18 +591,21 @@ Open a new terminal, start rsync-auto.
 cd ~/<local_workspace>/<local_project_dir>/vagrant
 vagrant rsync-auto
 ```
+
 ### Edit a source file
 Related source files are in:
-~/<local_workspace>/<local_project_dir>/dockerfiles/site1/data
+~/<local_workspace>/<local_project_dir>/dockerfiles/app1/data
   - www directory
 
-~/<local_workspace>/<local_project_dir>/dockerfiles/site2/data
+~/<local_workspace>/<local_project_dir>/dockerfiles/app2/data
   - www directory
 
-Edit ~/<local_workspace>/<local_project_dir>/dockerfiles/site1/data/www/index.html file with a text editor , make some changes in content, and save the file. Open a web browser, and go to: 'http://<local_domain_name_1>' .
+Edit ~/<local_workspace>/<local_project_dir>/dockerfiles/app1/data/www/index.html file with a text editor , make some changes in content, and save the file. File synch can take a few seconds. Open a web browser, and go to: 'http://<local_domain_name_1>' .
+
 Refresh the page: <kbd>SHIFT</kbd>+<kbd>F5</kbd> function key.
-If same page comes, wait for a few seconds and hit <kbd>SHIFT</kbd>+<kbd>F5</kbd> key again.
+If same page comes, wait for a few seconds and hit <kbd>SHIFT</kbd>+<kbd>F5</kbd> key again. We can see the change at this point.
 
+Development environment installation finished.
 
 ### How to stop Vagrant VM
 
@@ -345,6 +618,8 @@ CTRL+C on the terminal to stop vagrant rsync-auto
 cd ~/<local_workspace>/<local_project_dir>/vagrant
 vagrant halt
 ```
+
+Now, you can continue to [Production Environment installation](install_prod.md).
 
 [Back to README](../README.md)
 
@@ -369,3 +644,6 @@ vagrant halt
 
 - Git
   - https://github.com/git-guides/install-git
+
+- Traefik
+  - https://doc.traefik.io/traefik/https/acme/

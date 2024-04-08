@@ -19,9 +19,12 @@
 
 - name: Install Vagrant
   ansible.builtin.apt:
-    name: vagrant={{ vagrant_version }}
-    state: present
-    update_cache: yes
+    name: vagrant
+    state: latest
+    update_cache: true
+  become_method: sudo
+  become_user: root
+  become: true
 
 - name: Install packages
   ansible.builtin.apt:

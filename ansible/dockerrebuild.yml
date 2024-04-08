@@ -1,0 +1,198 @@
+---
+- hosts: development, production
+  become: true
+  gather_facts: yes
+
+  tasks:
+    # - name: hash -r
+    #   shell: hash -r
+
+    - name: symlink python
+      raw: |
+        if [ ! -f /usr/bin/python3 ]; then 
+          ln --symbolic python3.10 /usr/bin/python3;
+        fi
+      become: true
+
+    - name: symlink python
+      raw: |
+        if [ ! -f /usr/bin/python ]; then 
+          ln --symbolic python3.10 /usr/bin/python;
+        fi
+      become: true
+
+    - name: Install requests Python package
+      ansible.builtin.pip:
+        name: requests
+
+    # Check if dockerfiles directory exists
+    - name: Checking if a directory exists
+      stat:
+        path: /home/{{ ansible_user }}/dockerfiles
+      register: dir_data
+
+    - name: Report a misssing directory
+      debug:
+        msg: "dockerfiles directory doesn't exist"
+      when: not dir_data.stat.exists
+
+    - name: Report if a directory exists
+      debug:
+        msg: "dockerfiles directory exists"
+      when: dir_data.stat.exists and dir_data.stat.isdir
+
+    - name: Stop services
+      community.docker.docker_compose_v2:
+        project_src: /home/{{ ansible_user }}/dockerfiles
+        state: stopped
+      register: output
+      when: dir_data.stat.exists and dir_data.stat.isdir
+
+    - name: Tear down existing services
+      community.docker.docker_compose_v2:
+        project_src: /home/{{ ansible_user }}/dockerfiles
+        state: absent
+        remove_orphans: true
+      when: dir_data.stat.exists and dir_data.stat.isdir
+
+    - name: Remove nginx image
+      community.docker.docker_image:
+        state: absent
+        source: local
+        name: "{{ docker_nginx_image_name }}"
+        tag: latest
+
+    - name: Remove nginx image
+      community.docker.docker_image:
+        state: absent
+        source: local
+        name: "{{ docker_nginx_image_name }}"
+        tag: "{{ docker_nginx_image_version }}"
+
+    - name: Remove nginx image 2
+      community.docker.docker_image:
+        state: absent
+        source: local
+        name: "{{ docker_nginx_image_name_2 }}"
+        tag: latest
+
+    - name: Remove nginx image 2
+      community.docker.docker_image:
+        state: absent
+        source: local
+        name: "{{ docker_nginx_image_name_2 }}"
+        tag: "{{ docker_nginx_image_version_2 }}"
+
+    - name: Remove traefikcustom latest image
+      community.docker.docker_image:
+        state: absent
+        source: local
+        name: "{{ docker_traefik_image_name }}"
+        tag: latest
+
+    - name: Remove traefikcustom image
+      community.docker.docker_image:
+        state: absent
+        source: local
+        name: "{{ docker_traefik_image_name }}"
+        tag: "{{ docker_traefik_image_version }}"
+
+
+    # Do not run this on Dev PC
+    - name: Recursively remove directory
+      ansible.builtin.file:
+        path: '/home/{{ ansible_user }}/dockerfiles'
+        state: absent
+
+    # Create dockerfiles directory
+    - name: Create a directory if it does not exist
+      ansible.builtin.file:
+        path: '/home/{{ ansible_user }}/dockerfiles'
+        state: directory
+        owner: '{{ ansible_user }}'
+        group: '{{ ansible_user }}'
+        mode: u+rw,g-wx,o-rwx
+
+    # Upload everthing for development VM
+    - name: Upload dockerfiles directory with rsync
+      ansible.posix.synchronize:
+        archive: true
+        checksum: true
+        compress: true
+        delete: false
+        dirs: false
+        group: false
+        owner: false
+        perms: false
+        recursive: true
+        mode: push
+        times: true
+        verify_host: true
+        private_key: '{{ ansible_ssh_private_key_file }}'
+        set_remote_user: true
+        src: '{{ workbench_full_path }}/dockerfiles'
+        dest: '/home/{{ ansible_user }}'
+        dest_port: '{{ ansible_port }}'
+        rsync_timeout: 600
+
+    # Loading docker images from .tar files
+    # - name: Load traefik docker image from tar file
+    #   community.docker.docker_image_load:
+    #     path: '/home/{{ ansible_user }}/dockerfiles/images/{{ docker_traefik_image_name }}.tar'
+    #   register: result
+
+    # - name: Print the loaded image names
+    #   ansible.builtin.debug:
+    #     msg: "Loaded the following images: {{ result.image_names | join(', ') }}"
+
+
+    - name: Build nginx image
+      community.docker.docker_image:
+        name: "{{ docker_nginx_image_name }}"
+        build:
+          # args:
+          #   log_volume: /var/log/nginx
+          #   chdir: '{{ workbench_full_path }}/dockerfiles'
+          dockerfile: Dockerfile
+          path: '/home/{{ ansible_user }}/dockerfiles/{{ nginx_directory_name }}'
+        state: present
+        repository: "{{ docker_nginx_image_name }}:{{ docker_nginx_image_version }}"
+        source: build
+        tag: '{{ docker_nginx_image_version }}'
+        push: false
+
+    - name: Build nginx2 image
+      community.docker.docker_image:
+        name: "{{ docker_nginx_image_name_2 }}"
+        build:
+          # args:
+          #   log_volume: /var/log/nginx
+          #   chdir: '{{ workbench_full_path }}/dockerfiles'
+          dockerfile: Dockerfile
+          path: '/home/{{ ansible_user }}/dockerfiles/{{ nginx_directory_name_2 }}'
+        state: present
+        repository: "{{ docker_nginx_image_name_2 }}:{{ docker_nginx_image_version_2 }}"
+        source: build
+        tag: '{{ docker_nginx_image_version_2 }}'
+        push: false
+
+    - name: Build traefikcustom image
+      community.docker.docker_image:
+        name: "{{ docker_traefik_image_name }}"
+        build:
+          dockerfile: Dockerfile
+          path: '/home/{{ ansible_user }}/dockerfiles/{{ traefik_directory_name }}'
+          # args:
+          #   log_volume: /var/log/nginx
+          #   chdir: '{{ workbench_full_path }}/dockerfiles'
+        state: present
+        repository: '{{ docker_traefik_image_name }}:{{ docker_traefik_image_version }}'
+        source: build
+        tag: '{{ docker_traefik_image_version }}'
+        push: false
+
+    - name: Start services
+      community.docker.docker_compose_v2:
+        project_src: '/home/{{ ansible_user }}/dockerfiles'
+      register: output
+

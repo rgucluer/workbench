@@ -21,6 +21,9 @@ I am open to suggestions. You can reach me via rgucluer@gmail.com .
   - [Development Environment](docs/install_dev.md)
   - [Production Environment](docs/install_prod.md)
 
+
+## Letsencrypt
+- [Manual certificate related operations](docs/lego_certs.md)
 -----
 
 ### LICENSE

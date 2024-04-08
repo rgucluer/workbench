@@ -7,27 +7,31 @@ all:
       ansible_connection: ssh
       ansible_user: produser
       ansible_ssh_private_key_file: ~/.ssh/produser
-      docker_nginx_image_name: nginximg
-      docker_nginx_image_version: "1.23"
-      nginx_directory_name: site1
-      docker_nginx_image_name_2: nginximg2
-      docker_nginx_image_version_2: "1.23"
-      nginx_directory_name_2: site2
+      docker_profile: production
+
     development:
       ansible_host: 127.0.0.1
       ansible_port: 22
       ansible_connection: ssh
       ansible_user: vagrant
       ansible_ssh_private_key_file: ~/.ssh/devuser1
-      docker_nginx_image_name: nginximg
-      docker_nginx_image_version: "1.23"
-      nginx_directory_name: site1
-      docker_nginx_image_name_2: nginximg2
-      docker_nginx_image_version_2: "1.23"
-      nginx_directory_name_2: site2
+      docker_profile: development
+
     local:
       ansible_connection: local
       ansible_become: true
+      ansible_user: enter_your_system_username
+      docker_profile: local
+
   vars:
     ansible_python_interpreter: /usr/bin/python3.10
     workbench_full_path: /full/path/to/workbench
+    docker_nginx_image_name: nginximg
+    docker_nginx_image_version: "1.25.3"
+    nginx_directory_name: app1
+    docker_nginx_image_name_2: nginximg2
+    docker_nginx_image_version_2: "1.25.3"
+    nginx_directory_name_2: app2
+    docker_traefik_image_name: traefikcustom
+    docker_traefik_image_version: "v2.11.0"
+    traefik_directory_name: traefik

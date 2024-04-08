@@ -1,124 +1,257 @@
 version: '3.9'
 
 volumes:
-  site1vol:
-  site2vol:
-
-services:
-  proxy-service:
-    image: jwilder/nginx-proxy
-    container_name: reverseproxy
-    restart: always
-    ports:
-      - '80:80'
-    volumes:
-      - /var/run/docker.sock:/tmp/docker.sock:ro
-    networks:
-      - net-group-first
-      - net-group-second
-
-  site1nginx-development:
-    profiles: ["development"]
-    env_file:
-      - ./nginx1-development.env
-    build:
-      context: "./${APP_FOLDER}"
-      dockerfile: Dockerfile
-      args:
-        virtual_host: "${VIRTUAL_HOST}"
-    image: nginximg:1.23
-    container_name: container-site1
-    restart: unless-stopped
-    tty: true
-    expose:
-      - 80
-    volumes:
-      - site1vol:/var/log/nginx
-      - type: bind
-        source: "/home/vagrant/dockerfiles/site1/data/www"
-        target: "/usr/share/nginx/html"
-      - type: bind
-        source: "/home/vagrant/dockerfiles/site1/data/images"
-        target: "/usr/share/nginx/images"
-    networks:
-      - net-group-first
-    depends_on:
-      - proxy-service
-
-  site1nginx-production:
-    profiles: ["production"]
-    env_file:
-      - ./nginx1-production.env
-    build:
-      context: "./${APP_FOLDER}"
-      dockerfile: Dockerfile
-      args:
-        virtual_host: "${VIRTUAL_HOST}"
-    image: nginximg:1.23
-    container_name: container-site1
-    restart: unless-stopped
-    tty: true
-    expose:
-      - 80
-    volumes:
-      - site1vol:/var/log/nginx
-    networks:
-      - net-group-first
-    depends_on:
-      - proxy-service
-
-  site2nginx-development:
-    profiles: ["development"]
-    env_file:
-      - ./nginx2-development.env
-    build:
-      context: "./${APP_FOLDER}"
-      dockerfile: Dockerfile
-      args:
-        virtual_host: "${VIRTUAL_HOST}"
-    image: nginximg2:1.23
-    container_name: container-site2
-    restart: unless-stopped
-    tty: true
-    expose:
-      - 80
-    volumes:
-      - site2vol:/var/log/nginx
-      - type: bind
-        source: "/home/vagrant/dockerfiles/site2/data/www"
-        target: "/usr/share/nginx/html"
-      - type: bind
-        source: "/home/vagrant/dockerfiles/site2/data/images"
-        target: "/usr/share/nginx/images"
-    networks:
-      - net-group-second
-    depends_on:
-      - proxy-service
-
-  site2nginx-production:
-    profiles: ["production"]
-    env_file:
-      - ./nginx2-production.env
-    build:
-      context: "./${APP_FOLDER}"
-      dockerfile: Dockerfile
-      args:
-        virtual_host: "${VIRTUAL_HOST}"
-    image: nginximg2:1.23
-    container_name: container-site2
-    restart: unless-stopped
-    tty: true
-    expose:
-      - 80
-    volumes:
-      - site2vol:/var/log/nginx
-    networks:
-      - net-group-second
-    depends_on:
-      - proxy-service
+  traefikvol:
+  traefiklogvol:
+  app1vol:
+  app2vol:
 
 networks:
   default:
-    name: nginx-proxy
-  net-group-first:
-  net-group-second:
+    name: net-group-notset
+  net-proxy:
+  net-group-1:
+  net-group-2:
+  net-group-3:
+  net-group-notset:
+
+services:
+  reverse-proxy-development:
+    profiles: ["development"]
+    build:
+      context: "./traefik"
+      dockerfile: Dockerfile
+      args:
+        virtual_host: "traefik.myserver.com"
+    image: "traefikcustom:v2.11.0"
+    container_name: "traefik-development"
+    restart: "unless-stopped"
+    ports:
+      # The HTTP port
+      - "80:80"
+      # The HTTPS port
+      - "443:443"
+      # Traefik Dashboard port
+      - "8080:8080"
+      # Ping port
+      - "8082:8082"
+    tty: true
+    expose:
+      - 80
+      - 443
+      - 8080
+      - 8082
+
+    # Add your DNS Auth. API keys here.
+    environment:
+    - "SERVICE_PROVIDER_API_KEY=/path/to/Some_API_key_file.txt"
+
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+
+      # Static Configuration
+      - "./traefik/traefik.yml:/etc/traefik/traefik.yml"
+
+      # Dynamic Configuration
+      - "./traefik/dynamic.yml:/etc/traefik/dynamic.yml"
+
+      # User Credentials
+      - "./traefik/users.txt:/etc/traefik/users.txt"
+
+      # Storage
+      - "./traefik/storage:/traefik/storage"
+
+      - "./traefik/log/traefik.log:/var/log/traefik.log"
+      - "./traefik/log/access.txt:/var/log/access.txt"
+
+    networks:
+      - "net-proxy"
+      - "net-group-1"
+      - "net-group-2"
+      - "net-group-3"
+
+  reverse-proxy-production:
+    profiles: ["production"]
+    build:
+      context: "./traefik"
+      dockerfile: Dockerfile
+      args:
+        virtual_host: "traefik.myserver.com"
+    image: "traefikcustom:v2.11.0"
+    container_name: "traefik-production"
+    restart: "unless-stopped"
+    ports:
+      # The HTTP port
+      - "80:80"
+      # # The HTTPS port
+      - "443:443"
+      # Traefik Dashboard port
+      - "8080:8080"
+      # Ping port
+      - "8082:8082"
+    tty: true
+    expose:
+      - 80
+      - 443
+      - 8080
+      - 8082
+    # Add your DNS Auth. API keys here.
+    environment:
+    - "SERVICE_PROVIDER_API_KEY=/path/to/Some_API_key_file.txt"
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+
+      # Traefik storage
+      - traefikvol:/traefik/storage/
+
+      # Traefik log
+      - traefiklogvol:/traefik/log/
+
+    networks:
+      - "net-proxy"
+      - "net-group-1"
+      - "net-group-2"
+      - "net-group-3"
+
+  whoami-development:
+    profiles: ["development"]
+    image: "traefik/whoami"
+    container_name: "simple-service-development"
+    networks:
+      - "net-group-3"
+    expose:
+      - 80
+      - 443
+    labels:
+      traefik.enable: true
+      traefik.http.routers.whoami-https.rule: "Host(`whoami.myserver.com`)"
+      traefik.http.routers.whoami-https.entryPoints: "web-secure"
+      traefik.http.routers.whoami-https.service: "whoami-development-myproject"
+      traefik.http.routers.whoami-https.tls.domains.main: "whoami.myserver.com"
+      traefik.http.routers.whoami-https.middlewares: "auth@file"
+    depends_on:
+      - "reverse-proxy-development"
+
+  app1-development:
+    profiles: ["development"]
+    build:
+      context: "./app1"
+      dockerfile: Dockerfile
+      args:
+        virtual_host: "myserver.com"
+    image: "nginximg:1.25.3"
+    container_name: "container-app1-development"
+    restart: "unless-stopped"
+    networks:
+      - "net-group-1"
+    tty: true
+    expose:
+      - 80
+      - 443
+    volumes:
+      - app1vol:/var/log/nginx
+      - type: bind
+        source: "/home/vagrant/dockerfiles/app1/data/www"
+        target: "/usr/share/nginx/html"
+      - type: bind
+        source: "/home/vagrant/dockerfiles/app1/data/images"
+        target: "/usr/share/nginx/images"
+    labels:
+      traefik.enable: true
+      traefik.http.routers.app1-https.rule: "Host(`myserver.com`)"
+      traefik.http.routers.app1-https.entryPoints: "web-secure"
+      traefik.http.routers.app1-https.service: "app1-development-myproject"
+      traefik.http.routers.app1-https.tls.domains.main: "myserver.com"
+    depends_on:
+      - "reverse-proxy-development"
+
+  app1-production:
+    profiles: ["production"]
+    build:
+      context: "./app1"
+      dockerfile: Dockerfile
+      args:
+        virtual_host: "myserver.com"
+    image: nginximg:1.25.3
+    container_name: "container-app1-production"
+    restart: "unless-stopped"
+    networks:
+      - net-group-1
+    tty: true
+    expose:
+      - 80
+      - 443
+    volumes:
+      - app1vol:/var/log/nginx
+
+    labels:
+      traefik.enable: true
+      traefik.http.routers.app1-https.rule: "Host(`myserver.com`)"
+      traefik.http.routers.app1-https.entryPoints: "web-secure"
+      traefik.http.routers.app1-https.service: "app1-production-myserver"
+      traefik.http.routers.app1-https.tls.domains.main: "myserver.com"
+    depends_on:
+      - reverse-proxy-production
+
+  app2-development:
+    profiles: ["development"]
+    build:
+      context: "./app2"
+      dockerfile: Dockerfile
+      args:
+        virtual_host: "demo1.myserver.com"
+    image: "nginximg2:1.25.3"
+    container_name: "container-app2-development"
+    restart: "unless-stopped"
+    networks:
+      - "net-group-2"
+    tty: true
+    expose:
+      - 80
+      - 443
+    volumes:
+      - app2vol:/var/log/nginx
+      - type: bind
+        source: "/home/vagrant/dockerfiles/app2/data/www"
+        target: "/usr/share/nginx/html"
+      - type: bind
+        source: "/home/vagrant/dockerfiles/app2/data/images"
+        target: "/usr/share/nginx/images"
+    labels:
+      traefik.enable: true
+      traefik.http.routers.app2-https.rule: "Host(`demo1.myserver.com`)"
+      traefik.http.routers.app2-https.entryPoints: "web-secure"
+      traefik.http.routers.app2-https.service: "app2-development-myserver"
+      traefik.http.routers.app2-https.tls.domains.main: "demo1.myserver.com"
+    depends_on:
+      - "reverse-proxy-development"
+
+  app2-production:
+    profiles: ["production"]
+    build:
+      context: "./app2"
+      dockerfile: Dockerfile
+      args:
+        virtual_host: "demo1.myserver.com"
+    image: nginximg2:1.25.3
+    container_name: "container-app2-production"
+    restart: unless-stopped
+    networks:
+      - net-group-2
+    tty: true
+    expose:
+      - 80
+      - 443
+    volumes:
+      - app2vol:/var/log/nginx
+    labels:
+      traefik.enable: true
+      traefik.http.routers.app2-https.rule: "Host(`demo1.myserver.com`)"
+      traefik.http.routers.app2-https.entryPoints: "web-secure"
+      traefik.http.routers.app2-https.service: "app2-production-myserver"
+      traefik.http.routers.app2-https.tls.domains.main: "demo1.myserver.com"
+
+    depends_on:
+      - reverse-proxy-production

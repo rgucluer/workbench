@@ -5,12 +5,12 @@ galaxy_info:
   
   # If the issue tracker for your role is not on github, uncomment the
   # next line and provide a value
-  # issue_tracker_url: http://example.com/issue/tracker
+  # issue_tracker_url: http://dswebdocs.org/issue/tracker
 
   # Choose a valid license ID from https://spdx.org
-  license: Apache-2.0
+  license: "MIT"
 
-  min_ansible_version: 2.14
+  min_ansible_version: "2.14"
 
   # If this a Container Enabled role, provide the minimum Ansible Container version.
   # min_ansible_container_version:
@@ -22,12 +22,12 @@ galaxy_info:
   # https://galaxy.ansible.com/api/v1/platforms/
   #
   platforms:
-    - name: Ubuntu
+    - name: "Ubuntu"
       versions:
-      - 22.04
-    - name: Pop!_OS
+      - "22.04"
+    - name: "Pop!_OS"
       versions:
-      - 22.04
+      - "22.04"
 
   galaxy_tags:
     - vagrant
