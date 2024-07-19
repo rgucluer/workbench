@@ -1,7 +1,7 @@
 ---
 all:
   hosts:
-    production1:
+    production:
       ansible_host: 127.0.0.1
       ansible_port: 22
       ansible_connection: ssh
@@ -24,14 +24,17 @@ all:
       docker_profile: local
 
   vars:
-    ansible_python_interpreter: /usr/bin/python3.10
+    ansible_python_interpreter: /usr/bin/python3
     workbench_full_path: /full/path/to/workbench
+
     docker_nginx_image_name: nginximg
     docker_nginx_image_version: "1.25.3"
     nginx_directory_name: app1
+
     docker_nginx_image_name_2: nginximg2
     docker_nginx_image_version_2: "1.25.3"
     nginx_directory_name_2: app2
+    
     docker_traefik_image_name: traefikcustom
-    docker_traefik_image_version: "v2.11.0"
+    docker_traefik_image_version: "v3.0.3"
     traefik_directory_name: traefik

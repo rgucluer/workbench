@@ -4,23 +4,6 @@
   gather_facts: yes
 
   tasks:
-    # - name: hash -r
-    #   shell: hash -r
-
-    - name: symlink python
-      raw: |
-        if [ ! -f /usr/bin/python3 ]; then 
-          ln --symbolic python3.10 /usr/bin/python3;
-        fi
-      become: true
-
-    - name: symlink python
-      raw: |
-        if [ ! -f /usr/bin/python ]; then 
-          ln --symbolic python3.10 /usr/bin/python;
-        fi
-      become: true
-
     - name: Install aptitude
       ansible.builtin.apt:
         name: aptitude
@@ -36,22 +19,102 @@
         force_apt_get: no
         cache_valid_time: 3600
 
-    - name: Install requests Python package
-      ansible.builtin.pip:
-        name: requests
-
     - name: Install required system packages
       ansible.builtin.apt:
         pkg:
           - apt-transport-https 
+          - python3-pip
           - ca-certificates
           - curl
           - software-properties-common
           - gnupg
           - lsb-release
           - lego
+          - vim
+          - git
+          - ufw
         state: latest
         update_cache: true
+      become_method: sudo
+      become_user: root
+      become: true
+
+    - name: Install requests Python package
+      ansible.builtin.pip:
+        name: requests==2.31.0
+
+    - name: UFW - Disable
+      community.general.ufw:
+        state: disabled
+      become_method: sudo
+      become_user: root
+      become: true
+
+    - name: Allow "{{ ansible_port }}"
+      community.general.ufw:
+        rule: allow
+        port: "{{ ansible_port }}"
+      become_method: sudo
+      become_user: root
+      become: true
+
+    - name: Limit "{{ ansible_port }}"
+      community.general.ufw:
+        rule: limit
+        port: "{{ ansible_port }}"
+        proto: tcp
+      become_method: sudo
+      become_user: root
+      become: true
+
+    - name: UFW - Enable
+      community.general.ufw:
+        state: enabled
+      become_method: sudo
+      become_user: root
+      become: true
+
+    - name: Allow access to tcp port 80
+      community.general.ufw:
+        rule: allow
+        port: "80"
+        proto: tcp
+      become_method: sudo
+      become_user: root
+      become: true
+
+    - name: Allow access to tcp port 443
+      community.general.ufw:
+        rule: allow
+        port: "443"
+        proto: tcp
+      become_method: sudo
+      become_user: root
+      become: true
+
+    - name: Allow access to tcp port 8080
+      community.general.ufw:
+        rule: allow
+        port: "8080"
+        proto: tcp
+      become_method: sudo
+      become_user: root
+      become: true
+
+    - name: Allow access to tcp port 8082
+      community.general.ufw:
+        rule: allow
+        port: "8082"
+        proto: tcp
+      become_method: sudo
+      become_user: root
+      become: true
+
+    - name: Enable default deny with logging
+      community.general.ufw:
+        state: enabled
+        default: deny
+        logging: "on"
       become_method: sudo
       become_user: root
       become: true
@@ -148,7 +211,7 @@
       pip:
         name: docker
 
-    - name: Ensure group 'docker' exists
+    - name: Ensure group docker exists
       ansible.builtin.group:
         name: docker
         state: present
@@ -156,7 +219,7 @@
       become_user: root
       become: true
 
-    - name: Add the user () with a bash shell, appending the group 'docker' to the user's groups
+    - name: Add the user () with a bash shell, appending the group docker to the user's groups
       ansible.builtin.user:
         name: "{{ ansible_user }}"
         shell: /bin/bash

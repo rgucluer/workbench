@@ -1,0 +1,45 @@
+http:
+  routers:
+    # reverse-proxy-http:
+    #   rule: Host(`traefik.myserver.com`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))
+    #   entryPoints: 
+    #     - "traefik"
+    #   service: "api@internal"
+
+    reverse-proxy-https:
+      rule: Host(`traefik.myserver.com`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))
+      entryPoints: 
+        - "traefik"
+      service: "api@internal"
+      tls:
+        certResolver: myresolver
+        domains:
+          - main: "traefik.myserver.com"
+      middlewares:
+        - "auth@file"
+
+    ping-https:
+      rule: Host(`traefik.myserver.com`) && PathPrefix(`/ping`)
+      entryPoints: 
+        - "ping"
+      service: "ping@internal"
+      tls:
+        certResolver: myresolver
+        domains:
+          - main: "traefik.myserver.com"
+
+  # middlewares:
+  #   auth:
+  #     basicAuth:
+  #       usersFile: "/etc/traefik/users.txt"
+
+tls:
+  options:
+    default:
+      sniStrict: true
+  certificates:
+    - certFile: /traefik/storage/.lego/certificates/_.myserver.com.crt
+      keyFile: /traefik/storage/.lego/certificates/_.myserver.com.key
+  stores:
+    default: {}
+

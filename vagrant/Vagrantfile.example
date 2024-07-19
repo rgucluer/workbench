@@ -3,7 +3,7 @@
 
 # ENV['VAGRANT_DEFAULT_PROVIDER'] = 'libvirt'
 # We set this environment variable with Ansible on Vagrant Host
-# File is ../ansible/dswebdocs/workbench/roles/vagrant/vars/main.yml
+# File workbench.yml. Set as a variable in "Install vagrant" task
 
 # All Vagrant configuration is done below. The "2" in Vagrant.configure
 # configures the configuration version (we support older styles for
@@ -90,6 +90,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision :shell do |s|
     ssh_key_filename="devuser1"
     ssh_pub_key = ""
+
     if File.file?("#{Dir.home}/.ssh/#{ssh_key_filename}.pub")
       ssh_pub_key = File.readlines("#{Dir.home}/.ssh/#{ssh_key_filename}.pub").first.strip
     else

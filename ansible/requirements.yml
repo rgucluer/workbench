@@ -1,6 +1,0 @@
----
-collections:
-  # directory containing a namespace, with collections as subdirectories
-  - source: ./dswebdocs/
-    type: subdirs
-

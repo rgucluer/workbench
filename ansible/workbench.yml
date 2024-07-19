@@ -2,6 +2,57 @@
 - hosts: localhost
   become: true
   gather_facts: yes
+  tasks:
+    # Install vagrant
+    - import_tasks: install_vagrant.yml
+      become: true
+      vars:
+        # Vagrant version to install
+        vagrant_version: "2.4.1*"
+        plugins_to_install:
+          - "vagrant-libvirt"
+          - "vagrant-mutate"
+        plugins_installed: []
+        plugins_installed_with_version: []
+        plugins_installed_names_only: []
+        plugin_name: ""
+        missing_plugins: []
+        os_environment:
+          - key: VAGRANT_DEFAULT_PROVIDER
+            value: libvirt
+            # value: virtualbox
+            # value: vmware_desktop
+            # value: docker
+            # value: hyperv
+      when: 
+        - ansible_facts['distribution'] == "Ubuntu" or ansible_facts['distribution'] == "Pop!_OS"
+        - ansible_facts['distribution_version'] == "22.04" or ansible_facts['distribution_version'] == "24.04"
 
-  roles:
-    - dswebdocs.workbench.vagrant
+    - include_tasks: copy_single_config_file.yml
+      loop: "{{files_to_check}}"
+      loop_control:
+        loop_var: config_item
+      vars:
+        files_to_check:
+          - target: "dockerfiles/.env"
+            source: "dockerfiles/.env.example"
+          - target: "dockerfiles/ansible/dockerrebuild.yml"
+            source: "dockerfiles/ansible/dockerrebuild.yml.example"
+          - target: "dockerfiles/docker-compose.yml"
+            source: "dockerfiles/docker-compose.yml.example"
+          - target: "dockerfiles/fail2ban/fail2ban.env"
+            source: "dockerfiles/fail2ban/fail2ban.env.example"
+          - target: "dockerfiles/fail2ban/jail.local"
+            source: "dockerfiles/fail2ban/jail.local.example"
+          - target: "dockerfiles/traefik/dynamic.yml"
+            source: "dockerfiles/traefik/dynamic.yml.example"
+          - target: "dockerfiles/traefik/traefik.yml"
+            source: "dockerfiles/traefik/traefik.yml.example"
+          - target: "dockerfiles/traefik/Dockerfile"
+            source: "dockerfiles/traefik/Dockerfile.example"
+          - target: "vagrant/Vagrantfile"
+            source: "vagrant/Vagrantfile.example"
+      when:
+        - ansible_facts['distribution'] == "Ubuntu" or ansible_facts['distribution'] == "Pop!_OS"
+        - ansible_facts['distribution_version'] == "22.04" or ansible_facts['distribution_version'] == "24.04"
+

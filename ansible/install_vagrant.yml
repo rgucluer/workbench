@@ -10,11 +10,25 @@
 - name: Install packages
   ansible.builtin.apt:
     pkg:
-      - qemu
-      - libvirt-daemon-system
+      - build-essential
+      - python3-pip
+      - libxslt-dev
+      - libxml2-dev
+      - zlib1g-dev
+      - ruby-dev
+      - dnsmasq-base
+      - qemu-kvm
       - libvirt-dev
+      - libvirt-daemon-system
       - ebtables
       - libguestfs-tools
+      - libvirt-clients
+      - ruby-libvirt
+      - qemu-kvm
+      - virtinst
+      - bridge-utils
+      - nfs-kernel-server
+      - virt-manager
     update_cache: yes
 
 - name: Install Vagrant
@@ -25,23 +39,6 @@
   become_method: sudo
   become_user: root
   become: true
-
-- name: Install packages
-  ansible.builtin.apt:
-    pkg:
-      - libvirt-clients
-      - libxslt-dev
-      - libxml2-dev
-      - zlib1g-dev
-      - ruby-dev
-      - ruby-libvirt
-      - dnsmasq-base
-      - qemu-kvm
-      - virtinst
-      - bridge-utils
-      - nfs-kernel-server
-      - virt-manager
-      - build-essential
 
 - name: vagrant plugin list
   become: false

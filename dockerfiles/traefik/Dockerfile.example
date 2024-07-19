@@ -1,6 +1,6 @@
 # Dockerfile for a custom Traefik image
 # Author: Recep GUCLUER
-FROM traefik:v2.11.0
+FROM traefik:v3.0.3
 
 # Static Configuration
 COPY traefik.yml /etc/traefik/traefik.yml
@@ -8,7 +8,8 @@ COPY traefik.yml /etc/traefik/traefik.yml
 # Dynamic Configuration
 COPY dynamic.yml /etc/traefik/dynamic.yml
 
-# Copy your DNS auth serrvice provider keys to
+# Copy your DNS auth service provider keys
+# Uncomment the following row and modify according to your setup
 # COPY your_file_api_key.txt /etc/traefik/your_file_api_key.txt
 
 # Users

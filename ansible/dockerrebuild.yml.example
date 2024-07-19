@@ -12,10 +12,10 @@
     # Select your zone from the list, and the value below.
     - name: Set timezone
       community.general.timezone:
-        name: Europe/Istanbul
+        name: Universal
       become_method: sudo
       become_user: root
-      become: true        
+      become: true
 
     # Check if dockerfiles directory exists
     - name: Checking if a directory exists
@@ -78,22 +78,6 @@
         source: local
         name: "{{ docker_nginx_image_name_2 }}"
         tag: "{{ docker_nginx_image_version_2 }}"
-        force_absent: yes
-
-    - name: Remove appx image
-      community.docker.docker_image:
-        state: absent
-        source: local
-        name: "{{ docker_appx_image_name }}"
-        tag: latest
-        force_absent: yes
-
-    - name: Remove appx image
-      community.docker.docker_image:
-        state: absent
-        source: local
-        name: "{{ docker_appx_image_name }}"
-        tag: "{{ docker_appx_image_version }}"
         force_absent: yes
 
     - name: Remove traefikcustom latest image
@@ -184,18 +168,6 @@
         tag: "{{ docker_nginx_image_version_2 }}"
         push: false
 
-    - name: Build appx image
-      community.docker.docker_image:
-        name: "{{ docker_appx_image_name }}"
-        build:
-          dockerfile: Dockerfile
-          path: "/home/{{ ansible_user }}/dockerfiles/{{ appx_directory_name }}"
-        state: present
-        repository: "{{ docker_appx_image_name }}:{{ docker_appx_image_version }}"
-        source: build
-        tag: "{{ docker_appx_image_version }}"
-        push: false
-
     - name: Build traefikcustom image
       community.docker.docker_image:
         name: "{{ docker_traefik_image_name }}"
@@ -278,7 +250,3 @@
         path: "/home/{{ ansible_user }}/dockerfiles/fail2ban/traefik-forceful-browsing.conf"
         container_path: "/etc/fail2ban/filter.d/traefik-forceful-browsing.conf"
       when: result.container.State.Running
-
-    - name: Wait for a few seconds
-      ansible.builtin.pause:
-        seconds: "2"

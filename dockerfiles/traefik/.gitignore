@@ -1,4 +1,7 @@
-dynamic.yml
-*_api_key.txt
-traefik.yml
-users.txt
+# Ignore everything in this directory
+*
+# Except these
+!.gitignore
+!Dockerfile.example
+!dynamic.yml.example
+!traefik.yml.example

@@ -1,0 +1,148 @@
+global:
+  checkNewVersion: true
+  sendAnonymousUsage: true
+
+api:
+  dashboard: true
+  insecure: false
+
+ping:
+  entryPoint: ping
+  manualRouting: true
+  terminatingStatusCode: 204
+
+providers:
+  docker:
+    watch: true
+    endpoint: "unix:///var/run/docker.sock"
+    defaultRule: Host(`traefik.myserver.com:8080`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))
+    exposedByDefault: false
+  file:
+    directory: /etc/traefik
+    watch: true
+
+entryPoints:
+  web:
+    address: ":80"
+    http:
+      redirections:
+        entryPoint:
+          to: web-secure
+          scheme: https
+          permanent: true
+
+  web-secure:
+    address: ":443"
+    asDefault: true
+
+  traefik:
+    address: ":8080"
+    http:
+      redirections:
+        entryPoint:
+          to: traefik
+          scheme: https
+          permanent: true
+      # middlewares:
+      #   - "auth@file"
+
+  ping:
+    address: ":8082"
+    http:
+      redirections:
+        entryPoint:
+          to: ping
+          scheme: https
+          permanent: true
+
+
+certificatesResolvers:
+  myresolver:
+    acme:
+      # caServer: https://acme-staging-v02.api.letsencrypt.org/directory
+      caServer: "https://acme-v02.api.letsencrypt.org/directory"
+      email: "my_email@myserver.com"
+      storage: "/traefik/storage/acme.json"
+      certificatesDuration: 2160
+      preferredChain: ""
+      keyType: "RSA4096"
+
+      dnsChallenge:
+        # DNS Providers LEGO CLI flag name
+        # Detailed information : https://go-acme.github.io/lego/dns/
+        provider: "my_dns_provider"
+        delayBeforeCheck: "60"
+        
+        # Use following DNS servers to resolve the FQDN authority.
+        # Let Hetzner be the the example:
+        # https://docs.hetzner.com/dns-console/dns/general/dns-overview/
+        # oxygen.ns.hetzner.com. 	88.198.229.192 	2a01:4f8:0:1::add:2992
+        # helium.ns.hetzner.de. 	193.47.99.5 	2001:67c:192c::add:5
+        # hydrogen.ns.hetzner.com. 	213.133.100.98 	2a01:4f8:0:1::add:1098
+        # Cloudflare DNS  1.1.1.1
+        # Google DNS 8.8.8.8
+        resolvers:
+        - "88.198.229.192:53"        
+        - "193.47.99.5:53"
+        - "213.133.100.98:53"
+        - "1.1.1.1:53"
+        - "8.8.8.8:53"
+        disablePropagationCheck: false
+
+log:
+  level: INFO
+  format: json
+  noColor: true
+  filePath: "/var/log/traefik/traefik.log"
+
+accessLog:
+  filePath: "/var/log/traefik/access.log"
+  format: json
+  filters:
+    statusCodes:
+      - "400-409"
+    retryAttempts: true
+    minDuration: "10ms"
+  bufferingSize: 0
+  fields:
+    headers:
+      defaultMode: drop
+      names:
+        User-Agent: keep
+        Authorization: drop
+        Content-Type: keep
+    # defaultMode: keep
+    # names:
+    #   ClientUsername: drop
+    # StartUTC: drop
+    # Duration: keep
+    # RouterName: keep
+    # ServiceName: drop
+    # ServiceURL: drop
+    # ServiceAddr: drop
+    # ClientHost: keep
+    # ClientPort: drop
+    # ClientUsername: drop
+    # RequestAddr: keep
+    # RequestHost: keep
+    # RequestPort: keep
+    # RequestMethod: keep
+    # RequestPath: keep
+    # RequestProtocol: keep
+    # RequestScheme: keep
+    # RequestLine: drop
+    # RequestContentSize: keep
+    # OriginDuration: keep
+    # OriginContentSize: keep
+    # OriginStatus: keep
+    # OriginStatusLine: drop
+    # DownstreamStatus: keep
+    # DownstreamStatusLine: drop
+    # DownstreamContentSize: keep
+    # RequestCount: keep
+    # GzipRatio: drop
+    # Overhead: keep
+    # RetryAttempts: keep
+    # TLSVersion: keep
+    # TLSCipher: keep
+

@@ -25,6 +25,7 @@ self_docs/
 typings/
 
 # Traefik
+dockerfiles/traefik/Dockerfile
 dockerfiles/traefik/*traefik.yml
 dockerfiles/traefik/*dynamic.yml
 dockerfiles/traefik/*users.txt
@@ -33,6 +34,11 @@ dockerfiles/traefik/storage/log/
 dockerfiles/traefik/storage/acme.json
 dockerfiles/traefik/storage/*_api_key.txt
 dockerfiles/traefik/log/*
+dockerfiles/app3
+
+# Fail2ban
+dockerfiles/fail2ban/fail2ban.env
+dockerfiles/fail2ban/jail.local
 
 # Vagrant
 vagrant/.vagrant/

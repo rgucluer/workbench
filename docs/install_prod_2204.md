@@ -58,7 +58,6 @@ ping example.com
 
 We will check/edit these files through the installation process.
 
-
 ## Initial Setup Ubuntu 22.04 on VPS
 
 Add your server user ssh key to ssh agent
@@ -96,7 +95,6 @@ sudo apt upgrade
 ```
 Reboot, if necessary.
 
-
 ### On VPS: Enable UFW firewall
 Enabling two firewalls at the same time may cause some problems. Please follow your Cloud Provider's manuals before activating UFW firewall.
 ```bash
@@ -106,7 +104,6 @@ sudo ufw enable
 sudo ufw reload
 sudo ufw status
 ```
-
 
 ### On VPS: SSH authentication and removing Password login
 
