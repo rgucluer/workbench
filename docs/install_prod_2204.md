@@ -1,5 +1,7 @@
 # Installation of production environment:
 
+This document in not up to date.
+
 ## Requirements:
   - A Virtual Private Server(VPS) on a Cloud Provider. 
   - Ubuntu 22.04 installed on server.

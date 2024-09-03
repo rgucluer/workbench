@@ -81,10 +81,16 @@ certificatesResolvers:
         # hydrogen.ns.hetzner.com. 	213.133.100.98 	2a01:4f8:0:1::add:1098
         # Cloudflare DNS  1.1.1.1
         # Google DNS 8.8.8.8
+        # ns.second-ns.com. 	213.239.204.242
+        # ns1.your-server.de. 	213.133.100.102
+        # ns3.second-ns.de. 	193.47.99.4
         resolvers:
-        - "88.198.229.192:53"        
+        - "88.198.229.192:53"
+        - "193.47.99.4:53"
         - "193.47.99.5:53"
         - "213.133.100.98:53"
+        - "213.133.100.102:53"
+        - "213.239.204.242:53"
         - "1.1.1.1:53"
         - "8.8.8.8:53"
         disablePropagationCheck: false

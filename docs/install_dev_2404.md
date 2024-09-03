@@ -126,7 +126,7 @@ Docker Compose Profiles seperate development and production environments in dock
 
 ### On Controller PC: Check the current environment
 
-Check the current environment in <workbench_directory>/.env file. Uncomment development row, comment out production row.
+Check the current environment in <workbench_directory>/dockerfiles/.env file. Uncomment development row, comment out production row.
 ```ini
 COMPOSE_PROFILES="development"
 # COMPOSE_PROFILES="production"
@@ -407,10 +407,33 @@ The certificate files must persist between docker sessions, rsync must not delet
 
 Lego automaticaly updates certificates. But it will save the latest certificates to docker container storage. If these certificates are saved to development directory, we can prevent unnecassary certification renewals.
 
+### Copy storage directory from container to Vagrant VM
+
+On Vagrant VM:
+```bash
+cd ~/dockerfiles/traefik
+docker cp traefik-development:/traefik/storage/ ./
+```
+
+### Copy storage directory from Vagrant VM to Controller PC
+
+On Controller PC:
+```bash
+cd <workbench_directory>/dockerfiles/traefik
+rsync -avz vagrant@<vagrant_vm_IP>:dockerfiles/traefik/storage/ ./
+```
+
+### Change file permissions
+On Controller PC:
+```bash
+cd <workbench_directory>/dockerfiles/traefik/storage
+chmod 600 acme.json
+```
+
 TODO: Automate downloading Letsencrypt Certificates to Controller PC. 
   - Automatic status check of Letsencrypt certificates on traefik container.
-  - Save new certificates from docker container to VPS dockerfiles directory.
-  - Download new certificates from VPS to Controller PC. 
+  - Save new certificates from docker container to Vagrant VM/VPS dockerfiles directory.
+  - Download new certificates from Vagrant VM/VPS to Controller PC. 
 
 ### Set related values in docker-compose.yml for traefik
 
@@ -457,12 +480,6 @@ certificatesResolvers:
         - "1.1.1.1:53"
         - "8.8.8.8:53"
         disablePropagationCheck: false
-```
-
-### Change file permissions for acme.json
-```bash
-cd <workbench_full_path>/dockerfiles/traefik/storage
-chmod 600 acme.json
 ```
 
 ### Set related values in traefik/dynamic.yml

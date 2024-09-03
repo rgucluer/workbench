@@ -1,5 +1,7 @@
 # Installation of development environment:
 
+This document in not up to date.
+
 ## Requirements:
 - Operating System: Ubuntu 22.04, or Pop!_OS 22.04.
 - Virtualization enabled.

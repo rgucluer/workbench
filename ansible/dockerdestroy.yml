@@ -1,6 +1,6 @@
 ---
 - hosts: development, production
-  become: true
+  become: false
   gather_facts: yes
 
   tasks:

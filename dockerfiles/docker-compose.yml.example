@@ -25,7 +25,7 @@ services:
       dockerfile: Dockerfile
       args:
         virtual_host: "traefik.myserver.com"
-    image: "traefikcustom:v3.0.3"
+    image: "traefikcustom:v3.1.2"
     container_name: "traefik-development"
     restart: "always"
     ports:
@@ -79,7 +79,7 @@ services:
       dockerfile: Dockerfile
       args:
         virtual_host: "traefik.myserver.com"
-    image: "traefikcustom:v3.0.3"
+    image: "traefikcustom:v3.1.2"
     container_name: "traefik-production"
     restart: "always"
     ports:
@@ -129,8 +129,12 @@ services:
     volumes:
       - "fail2banvol:/data"
       - "traefiklogvol:/var/log/traefik:ro"
-    env_file:
-      - "./fail2ban/fail2ban.env"
+    environment:
+      - "TZ=Europe/Istanbul"
+      - "F2B_LOG_TARGET=STDOUT"
+      - "F2B_LOG_LEVEL=INFO"
+      - "F2B_DB_PURGE_AGE=7d"
+      - "IPTABLES_MODE=nft"
     depends_on:
       - "reverse-proxy-development"
 
@@ -147,8 +151,12 @@ services:
     volumes:
       - "fail2banvol:/data"
       - "traefiklogvol:/var/log/traefik:ro"
-    env_file:
-      - "./fail2ban/fail2ban.env"
+    environment:
+      - "TZ=Europe/Istanbul"
+      - "F2B_LOG_TARGET=STDOUT"
+      - "F2B_LOG_LEVEL=INFO"
+      - "F2B_DB_PURGE_AGE=7d"
+      - "IPTABLES_MODE=nft"
     depends_on:
       - "reverse-proxy-production"
 

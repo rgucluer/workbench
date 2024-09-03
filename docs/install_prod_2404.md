@@ -92,16 +92,19 @@ adduser <server_user>
 usermod -aG sudo <server_user>
 rsync --archive --chown=<server_user>:<server_user> ~/.ssh /home/<server_user>
 ```
-<kbd>CTRL</kbd>+<kbd>d</kbd> to end ssh session.
 
+### On Developer PC:
+Don't close this terminal. Open a new terminal, try to login with the new user.
 
-### Connect to VPS with the new user
 ```bash
 ssh <server_user>@<server_ip> -p <server_ssh_port>
 ```
 
+### On VPS: 
+If you are successful then switch to the first terminal (root user), and press <kbd>CTRL</kbd>+<kbd>d</kbd> to end the ssh session. 
+
 ### On VPS: Update apt packages
-Connect to server with ssh. Then,
+With the already open terminal:
 ```bash
 sudo apt update
 sudo apt upgrade
@@ -109,7 +112,7 @@ sudo apt upgrade
 Reboot, if necessary.
 
 ### On VPS: Enable UFW firewall
-Enabling two firewalls at the same time may cause some problems. Please follow your Cloud Provider's manuals before activating UFW firewall.
+Enabling two firewalls at the same time may cause some problems. Please follow your Cloud Provider's manuals before activating UFW firewall. Be sure to allow your ssh port in UFW, if you use another port other than 22 then allow that port instead of OpenSSH.
 ```bash
 sudo ufw status
 sudo ufw allow OpenSSH
@@ -124,7 +127,7 @@ sudo ufw status
 sudo nano /etc/ssh/sshd_config
 ```
 
-Edit the file according to the following lines. Add the AllowUsers row, enter your user name in place <server_user> without the angle brackets.
+Edit the file according to the following lines. Add the AllowUsers row to the end of file, enter your user name in place <server_user> without the angle brackets.
 
 ```bash
 PermitRootLogin no
@@ -139,7 +142,7 @@ AllowUsers <server_user>
 
 ### On VPS: Restart ssh service
 ```bash
-sudo systemctl restart sshd
+sudo systemctl restart ssh.service
 ```
 The system is ready to be managed with Ansible, and a bit more secure.
 
@@ -162,20 +165,17 @@ sudo ufw status
 8080 is for traefik, 8082 is for ping
 
 ## On Controller PC: Edit Ansible inventory file.
-Edit Ansible inventory file. Enter Server IP address, ssh port, user name.
+Edit Ansible inventory file. Enter Server IP address, ssh port, user name,ssh key filename and path for production environment.
 
-~/<local_workspace>/<local_project_dir>/ansible/inventory
+<workbench_directory>/ansible/inventory
 ```yaml
 production:
   ansible_host: <server_ip>
   ansible_port: <server_ssh_port>
+  ansible_connection: ssh
   ansible_user: <server_user>
-```
-
-Enter ssh key filename and path for production environment.
-```yaml
-production:
   ansible_ssh_private_key_file: ~/.ssh/<prod_ssh_key>
+  docker_profile: production
 ```
 
 ## Docker Compose Settings
@@ -186,7 +186,7 @@ Docker Compose Profiles seperate development and production environments in dock
 
 ### On Controller PC: Check the current environment
 
-Check the current environment in <workbench_directory>/.env file. Uncomment production row, comment out development row.
+Check the current environment in <workbench_directory>/dockerfiles/.env file. Uncomment production row, comment out development row.
 ```ini
 # COMPOSE_PROFILES="development"
 COMPOSE_PROFILES="production"
@@ -194,7 +194,7 @@ COMPOSE_PROFILES="production"
 
 ### On Controller PC:
 **Enter your domain address in docker-compose.yml**
-<workbench_directory>/docker-compose.yml
+<workbench_directory>/dockerfiles/docker-compose.yml
 ```yaml
 services:
   ...
@@ -239,16 +239,6 @@ services:
     traefik.http.routers.app2-https.tls.domains.main: "myserver.com"
 ```
 
-## Configure Fail2ban
-Edit file: <workbench_directory>/fail2ban/jail.local. Add the VPS server public IP address to **ignoreip** value list.
-
-```ini
-...
-[traefik-forceful-browsing]
-...
-ignoreip = <enter your server IP address here> ...
-...
-```
 
 ## Install Docker on Production Server
 
@@ -293,7 +283,7 @@ http://<domain_name_1>
 
 http://<domain_name_2>
 
-http://traefik.<domain_name_1>:8082/ping
+http://traefik.<domain_name_1>:8082/ping/
 
 https://traefik.<domain_name_1>:8080/dashboard/
 ( The last slash is important , do not omit it. )
@@ -337,12 +327,18 @@ You can refresh the page by pressing <kbd>SHIFT</kbd>+<kbd>F5</kbd> function key
 ## References:
 - Install Ubuntu on a VPS server
   - https://www.digitalocean.com/community/tutorials/initial-server-setup-with-ubuntu-22-04
+  - https://community.hetzner.com/tutorials/howto-initial-setup-ubuntu
+  - https://community.hetzner.com/tutorials/howto-ssh-key
+  - https://community.hetzner.com/tutorials/security-ubuntu-settings-firewall-tools
 
 - Ansible:
   - https://github.com/ansible/ansible/tree/v2.14.0
   - https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html
   - https://www.ansible.com/overview/how-ansible-works
   - https://galaxy.ansible.com/geerlingguy/pip
+
+- Docker:
+  - https://docs.docker.com/engine/install/ubuntu
   - https://www.digitalocean.com/community/tutorials/how-to-use-ansible-to-install-and-set-up-docker-on-ubuntu-22-04
 
 - Fail2ban

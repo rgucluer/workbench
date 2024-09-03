@@ -1,28 +1,32 @@
 ---
 - hosts: all
-  become: true
+  become: false
   gather_facts: yes
 
   tasks:
-    - name: Install aptitude
-      ansible.builtin.apt:
-        name: aptitude
-        state: latest
-        update_cache: true
-      become_method: sudo
-      become_user: root
-      become: true
+    # - name: Install aptitude
+    #   ansible.builtin.apt:
+    #     name: aptitude
+    #     state: latest
+    #     update_cache: true
+    #   become_method: sudo
+    #   become_user: root
+    #   become: true
 
     - name: Update apt repo and cache
       ansible.builtin.apt: 
         update_cache: yes
         force_apt_get: no
         cache_valid_time: 3600
+      become_method: sudo
+      become_user: root
+      become: true
 
     - name: Install required system packages
       ansible.builtin.apt:
         pkg:
           - apt-transport-https 
+          - python3-full
           - python3-pip
           - ca-certificates
           - curl
@@ -32,16 +36,21 @@
           - lego
           - vim
           - git
-          - ufw
         state: latest
-        update_cache: true
+        update_cache: false
       become_method: sudo
       become_user: root
       become: true
 
-    - name: Install requests Python package
-      ansible.builtin.pip:
-        name: requests==2.31.0
+    - name: Install required system packages
+      ansible.builtin.apt:
+        pkg:
+          - python3-requests
+        state: latest
+        update_cache: false
+      become_method: sudo
+      become_user: root
+      become: true
 
     - name: UFW - Disable
       community.general.ufw:
@@ -63,13 +72,6 @@
         rule: limit
         port: "{{ ansible_port }}"
         proto: tcp
-      become_method: sudo
-      become_user: root
-      become: true
-
-    - name: UFW - Enable
-      community.general.ufw:
-        state: enabled
       become_method: sudo
       become_user: root
       become: true
@@ -119,6 +121,76 @@
       become_user: root
       become: true
 
+    - name: UFW - Enable
+      community.general.ufw:
+        state: enabled
+      become_method: sudo
+      become_user: root
+      become: true
+
+    - name: Remove docker.io package
+      ansible.builtin.apt:
+        name: docker.io
+        state: absent
+        update_cache: false
+      become_method: sudo
+      become_user: root
+      become: true
+
+    - name: Remove docker-doc package
+      ansible.builtin.apt:
+        name: docker-doc
+        state: absent
+        update_cache: false
+      become_method: sudo
+      become_user: root
+      become: true
+
+    - name: Remove docker-compose package
+      ansible.builtin.apt:
+        name: docker-compose
+        state: absent
+        update_cache: false
+      become_method: sudo
+      become_user: root
+      become: true
+
+    - name: Remove docker-compose-v2 package
+      ansible.builtin.apt:
+        name: docker-compose-v2
+        state: absent
+        update_cache: false
+      become_method: sudo
+      become_user: root
+      become: true
+
+    - name: Remove podman-docker package
+      ansible.builtin.apt:
+        name: podman-docker
+        state: absent
+        update_cache: false
+      become_method: sudo
+      become_user: root
+      become: true
+
+    - name: Remove containerd package
+      ansible.builtin.apt:
+        name: containerd
+        state: absent
+        update_cache: false
+      become_method: sudo
+      become_user: root
+      become: true
+
+    - name: Remove runc package
+      ansible.builtin.apt:
+        name: runc
+        state: absent
+        update_cache: true
+      become_method: sudo
+      become_user: root
+      become: true
+
     - name: Remove docker package
       ansible.builtin.apt:
         name: docker
@@ -131,33 +203,6 @@
     - name: Remove docker-engine package
       ansible.builtin.apt:
         name: docker-engine
-        state: absent
-        update_cache: true
-      become_method: sudo
-      become_user: root
-      become: true
-
-    - name: Remove docker.io package
-      ansible.builtin.apt:
-        name: docker.io
-        state: absent
-        update_cache: true
-      become_method: sudo
-      become_user: root
-      become: true
-
-    - name: Remove containerd package
-      ansible.builtin.apt:
-        name: containerd
-        state: absent
-        update_cache: true
-      become_method: sudo
-      become_user: root
-      become: true
-
-    - name: Remove runc package
-      ansible.builtin.apt:
-        name: runc
         state: absent
         update_cache: true
       become_method: sudo
@@ -207,9 +252,23 @@
       become_user: root
       become: true
 
-    - name: Install Docker Module for Python
-      pip:
-        name: docker
+    - name: Install docker-buildx-plugin
+      ansible.builtin.apt:
+        name: docker-buildx-plugin
+        state: latest
+        update_cache: true
+      become_method: sudo
+      become_user: root
+      become: true
+
+    - name: Install docker-buildx-plugin
+      ansible.builtin.apt:
+        name: docker-compose-plugin
+        state: latest
+        update_cache: true
+      become_method: sudo
+      become_user: root
+      become: true
 
     - name: Ensure group docker exists
       ansible.builtin.group:

@@ -1,6 +1,9 @@
 # Dockerfile for a custom Traefik image
 # Author: Recep GUCLUER
-FROM traefik:v3.0.3
+FROM traefik:v3.1.2
+
+# Install lego
+RUN apk update && apk add --no-cache lego
 
 # Static Configuration
 COPY traefik.yml /etc/traefik/traefik.yml

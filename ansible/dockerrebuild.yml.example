@@ -202,13 +202,6 @@
         var: result.container.State.Running
       when: result.exists
 
-    - name: Copy action-forceful-browsing.conf file into the container
-      community.docker.docker_container_copy_into:
-        container: fail2ban
-        path: "/home/{{ ansible_user }}/dockerfiles/fail2ban/action-forceful-browsing.conf"
-        container_path: "/etc/fail2ban/action.d/action-forceful-browsing.conf"
-      when: result.container.State.Running
-
     - name: Wait for a few seconds
       ansible.builtin.pause:
         seconds: "2"
@@ -243,10 +236,3 @@
       ansible.builtin.debug:
         var: result.container.State.Running
       when: result.exists
-
-    - name: Copy traefik forceful browsing into the container
-      community.docker.docker_container_copy_into:
-        container: fail2ban
-        path: "/home/{{ ansible_user }}/dockerfiles/fail2ban/traefik-forceful-browsing.conf"
-        container_path: "/etc/fail2ban/filter.d/traefik-forceful-browsing.conf"
-      when: result.container.State.Running

@@ -15,7 +15,7 @@ You can reach me via rgucluer@gmail.com .
 
 ## Installation:
   - [Development Environment](docs/install_dev_2404.md)
-  - [Production Environment](docs/install_prod2404.md)
+  - [Production Environment](docs/install_prod_2404.md)
 
 ## Letsencrypt
 - [Manual certificate related operations](docs/lego_certs.md)

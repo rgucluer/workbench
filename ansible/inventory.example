@@ -36,5 +36,5 @@ all:
     nginx_directory_name_2: app2
     
     docker_traefik_image_name: traefikcustom
-    docker_traefik_image_version: "v3.0.3"
+    docker_traefik_image_version: "v3.1.2"
     traefik_directory_name: traefik

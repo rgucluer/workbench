@@ -1,0 +1,25 @@
+---
+- hosts: all
+  become: true
+  gather_facts: yes
+
+  roles:
+    - role: ansible-role-nvm
+      nodejs_version: "20.16.0"
+      nvm_commands:
+        - "nvm exec default npm install"
+
+  tasks:
+  - name: change_directory
+    shell: "cd /home/{{ ansible_user }} && pwd"
+    register: current_working_directory
+
+  - debug:
+      msg: "{{ current_working_directory.stdout }}"  
+
+  - name: Install nvm
+    ansible.builtin.shell: >
+      curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+    args:
+      creates: "{{ current_working_directory.stdout }}/.nvm/nvm.sh"
+

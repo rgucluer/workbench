@@ -7,6 +7,7 @@ http:
     #   service: "api@internal"
 
     reverse-proxy-https:
+      # https://traefik.myserver.com:8080/dashboard/
       rule: Host(`traefik.myserver.com`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))
       entryPoints: 
         - "traefik"
@@ -19,6 +20,7 @@ http:
         - "auth@file"
 
     ping-https:
+      # https://traefik.myserver.com:8082/ping/
       rule: Host(`traefik.myserver.com`) && PathPrefix(`/ping`)
       entryPoints: 
         - "ping"
