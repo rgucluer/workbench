@@ -1,4 +1,5 @@
 [DEFAULT]
+chain = INPUT
 # "bantime.increment" allows to use database for searching of previously banned ip's to increase a
 # default ban time using special formula, default it is banTime * 1, 2, 4, 8, 16, 32...
 bantime.increment = true
@@ -11,13 +12,17 @@ bantime.rndtime = 2048
 # for bantime=60 the multipliers are minutes and equal: 5 min, 30 min, 1 hour, 5 hour, 12 hour, 1 day, 2 day
 bantime.multipliers = 1 5 30 60 300 720 1440 2880
 
-# [sshd]
-# # chain = INPUT by default
+[sshd]
+# chain = INPUT by default
+enabled = true
+port = ssh
+filter = sshd[mode=aggressive]
+logpath = /var/log/traefik/access.log
+maxretry = 6
+findtime = 10
+bantime = 600
+
+# [pam-generic]
 # enabled = true
-# port = ssh
-# filter = sshd[mode=aggressive]
-# logpath = /var/log/traefik/access.log
-# maxretry = 6
-# findtime = 10
-# bantime = 600
+# # chain = INPUT by default
 

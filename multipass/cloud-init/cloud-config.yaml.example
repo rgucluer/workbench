@@ -1,0 +1,41 @@
+#cloud-config
+
+# timezone: US/Eastern
+timezone: Utc
+# timezone: "Europe/Istanbul"
+
+ssh:
+  allow_public_ssh_keys: true
+  # emit_keys_to_console: false
+
+# Basic system setup
+hostname: devserver1
+fqdn: devserver1.myserver.com
+
+# User setup configuration
+users:
+  - name: vmuser
+    gecos: Development User
+    groups: users, sudo
+    homedir: /home/vmuser
+    shell: /bin/bash
+    lock_passwd: true
+    # Enter the public ssh key below. Copy value from ~/.ssh/vmuserkey.pub 
+    ssh_authorized_keys:
+    - paste_value_here
+    sudo: ['ALL=(ALL) NOPASSWD:ALL']
+
+locale: false
+
+keyboard:
+  layout: us
+  model: pc105
+  variant: nodeadkeys
+  options: compose:rwin
+
+# Reboot the instance after configuration
+power_state:
+  mode: reboot
+  message: Rebooting after initial setup
+  timeout: 30
+  condition: true

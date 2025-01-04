@@ -1,6 +1,9 @@
+---
+
 http:
   routers:
     # reverse-proxy-http:
+    #   # http://traefik.myserver.com:8080/dashboard/
     #   rule: Host(`traefik.myserver.com`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))
     #   entryPoints: 
     #     - "traefik"
@@ -9,31 +12,31 @@ http:
     reverse-proxy-https:
       # https://traefik.myserver.com:8080/dashboard/
       rule: Host(`traefik.myserver.com`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))
-      entryPoints: 
+      entryPoints:
         - "traefik"
       service: "api@internal"
       tls:
         certResolver: myresolver
         domains:
-          - main: "traefik.myserver.com"
+          - main: "myserver.com"
       middlewares:
         - "auth@file"
 
     ping-https:
       # https://traefik.myserver.com:8082/ping/
       rule: Host(`traefik.myserver.com`) && PathPrefix(`/ping`)
-      entryPoints: 
+      entryPoints:
         - "ping"
       service: "ping@internal"
       tls:
         certResolver: myresolver
         domains:
-          - main: "traefik.myserver.com"
+          - main: "myserver.com"
 
-  # middlewares:
-  #   auth:
-  #     basicAuth:
-  #       usersFile: "/etc/traefik/users.txt"
+  middlewares:
+    auth:
+      basicAuth:
+        usersFile: "/etc/traefik/users.txt"
 
 tls:
   options:
@@ -45,3 +48,4 @@ tls:
   stores:
     default: {}
 
+...

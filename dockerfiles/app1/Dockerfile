@@ -1,6 +1,6 @@
 # Dockerfile for a basic Nginx image
 # Author: Recep GUCLUER
-FROM nginx:1.25.3
+FROM nginx:1.27.3-bookworm
 
 ARG virtual_host="app1.local"
 

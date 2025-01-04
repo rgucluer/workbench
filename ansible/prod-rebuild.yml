@@ -1,0 +1,10 @@
+---
+- name: Rebuild Dswebdocs Workbench - Production Environment
+  hosts: production
+  become: true
+  gather_facts: yes
+
+  tasks:
+    - include_tasks: tasks/dockerrebuild.yml
+
+...

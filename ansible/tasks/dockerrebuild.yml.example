@@ -1,0 +1,201 @@
+---
+
+# timedatectl list-timezones  command lists the timezones.
+# Select your zone from the list, and enter the value to the name key below.
+- name: Set timezone
+  community.general.timezone:
+    name: "UTC"
+  become: true
+
+- name: Update apt repo and cache
+  ansible.builtin.apt: 
+    update_cache: yes
+    force_apt_get: no
+    cache_valid_time: 300
+  become: true
+
+# Check if dockerfiles directory exists
+- name: Checking if a directory exists
+  stat:
+    path: /home/{{ ansible_user }}/dockerfiles
+  register: dir_data
+
+- name: Report a missing directory
+  debug:
+    msg: "dockerfiles directory doesn't exist"
+  when: not dir_data.stat.exists
+
+- name: Report an existing directory
+  debug:
+    msg: "dockerfiles directory exists"
+  when: dir_data.stat.exists and dir_data.stat.isdir
+
+- name: Remove existing services
+  community.docker.docker_compose_v2:
+    project_src: /home/{{ ansible_user }}/dockerfiles
+    state: "absent"
+    remove_orphans: true
+    remove_volumes: true
+    remove_images: "all"
+  when: dir_data.stat.exists and dir_data.stat.isdir
+  become: true
+  # ignore_errors: yes
+
+- name: Prune dangling images
+  community.docker.docker_prune:
+    images: true
+    builder_cache: true
+
+# Do not run this on Dev PC. Removes dockerfiles directory on target
+# - name: Recursively remove directory
+#   ansible.builtin.file:
+#     state: absent
+#     path: "/home/{{ ansible_user }}/dockerfiles"
+#   when: (docker_profile == 'production') and (dir_data.stat.exists and dir_data.stat.isdir)
+#   become: true
+
+# Create dockerfiles directory
+- name: Create a directory if it does not exist
+  ansible.builtin.file:
+    path: "/home/{{ ansible_user }}/dockerfiles"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0640"
+  when: not dir_data.stat.exists
+
+- name: Wait for a few seconds
+  ansible.builtin.pause:
+    seconds: "2"
+
+# Upload files
+- name: Upload dockerfiles directory with rsync
+  ansible.posix.synchronize:
+    archive: true
+    checksum: true
+    delete: true
+    dest: "/home/{{ ansible_user }}"
+    dest_port: "{{ ansible_port | int}}"
+    group: false
+    links: true
+    mode: push
+    owner: false
+    perms: true
+    private_key: "{{ ansible_ssh_private_key_file }}"
+    recursive: true
+    set_remote_user: true
+    src: "{{ workbench_full_path }}/dockerfiles"
+    rsync_path: "/usr/bin/rsync"
+    times: true
+  when: (docker_profile == 'production') and (dir_data.stat.exists and dir_data.stat.isdir)
+  become: true
+
+- name: Build nginx image
+  community.docker.docker_image:
+    name: "{{ docker_nginx_image_name }}"
+    build:
+      dockerfile: Dockerfile
+      path: "/home/{{ ansible_user }}/dockerfiles/{{ nginx_directory_name }}"
+    state: present
+    repository: "{{ docker_nginx_image_name }}:{{ docker_nginx_image_version }}"
+    source: build
+    tag: "{{ docker_nginx_image_version }}"
+    push: false
+
+- name: Build nginx2 image
+  community.docker.docker_image:
+    name: "{{ docker_nginx_image_name_2 }}"
+    build:
+      dockerfile: Dockerfile
+      path: "/home/{{ ansible_user }}/dockerfiles/{{ nginx_directory_name_2 }}"
+    state: present
+    repository: "{{ docker_nginx_image_name_2 }}:{{ docker_nginx_image_version_2 }}"
+    source: build
+    tag: "{{ docker_nginx_image_version_2 }}"
+    push: false
+
+- name: Build gatsby image
+  community.docker.docker_image:
+    name: "{{ docker_gatsby_image_name }}"
+    build:
+      dockerfile: Dockerfile
+      path: "/home/{{ ansible_user }}/dockerfiles/{{ gatsby_directory_name }}"
+    state: present
+    repository: "{{ docker_gatsby_image_name }}:{{ docker_gatsby_image_version }}"
+    source: build
+    tag: "{{ docker_gatsby_image_version }}"
+    push: false
+
+- name: Build fail2ban image
+  community.docker.docker_image:
+    name: "{{ docker_fail2ban_image_name }}"
+    build:
+      dockerfile: Dockerfile
+      path: "/home/{{ ansible_user }}/dockerfiles/{{ fail2ban_directory_name }}"
+    state: present
+    repository: "{{ docker_fail2ban_image_name}}:{{ docker_fail2ban_image_version }}"
+    source: build
+    tag: "{{ docker_fail2ban_image_version }}"
+    push: false
+
+- name: Build traefikcustom image
+  community.docker.docker_image:
+    name: "{{ docker_traefik_image_name }}"
+    build:
+      dockerfile: Dockerfile
+      path: "/home/{{ ansible_user }}/dockerfiles/{{ traefik_directory_name }}"
+    state: present
+    repository: "{{ docker_traefik_image_name }}:{{ docker_traefik_image_version }}"
+    source: build
+    tag: "{{ docker_traefik_image_version }}"
+    push: false
+
+- name: Allow access to tcp port 80
+  community.general.ufw:
+    rule: allow
+    port: "80"
+    proto: tcp
+  become: true
+
+- name: Allow access to tcp port 443
+  community.general.ufw:
+    rule: allow
+    port: "443"
+    proto: tcp
+  become: true
+
+- name: Allow access to tcp port 8080
+  community.general.ufw:
+    rule: allow
+    port: "8080"
+    proto: tcp
+  become: true
+
+- name: Allow access to tcp port 8082
+  community.general.ufw:
+    rule: allow
+    port: "8082"
+    proto: tcp
+  become: true
+
+- name: UFW - Disable
+  community.general.ufw:
+    state: disabled
+  become: true
+
+- name: UFW - Enable
+  community.general.ufw:
+    state: enabled
+  become: true
+
+- name: Start services
+  community.docker.docker_compose_v2:
+    state: "present"
+    project_src: "/home/{{ ansible_user }}/dockerfiles"
+    pull: "missing"
+    build: "policy"
+    recreate: "auto"
+    remove_orphans: true
+  register: output
+
+...

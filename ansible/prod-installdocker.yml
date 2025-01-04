@@ -1,0 +1,10 @@
+---
+- name: Install Docker - Production Environment
+  hosts: production
+  become: false
+  gather_facts: yes
+
+  tasks:
+    - include_tasks: tasks/installdocker.yml
+
+...

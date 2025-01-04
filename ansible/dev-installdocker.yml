@@ -1,0 +1,10 @@
+---
+- name: Install Docker - Development Environment
+  hosts: development
+  become: false
+  gather_facts: yes
+
+  tasks:
+    - include_tasks: tasks/installdocker.yml
+
+...

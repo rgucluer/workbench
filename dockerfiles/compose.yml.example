@@ -1,0 +1,382 @@
+volumes:
+  traefikvol:
+  traefiklogvol:
+  fail2banvol:
+  app1vol:
+  app2vol:
+  gatsbyvol:
+  gatsbylogvol:
+
+networks:
+  default:
+    name: net-group-notset
+  net-proxy:
+  net-group-1:
+  net-group-2:
+  net-group-3:
+  net-group-4:
+  net-group-notset:
+
+services:
+  reverse-proxy-development:
+    profiles: ["development"]
+    build:
+      context: "./traefik"
+      dockerfile: Dockerfile
+      args:
+        virtual_host: "myserver.com"
+    image: "traefikcustom:v3.2.1"
+    container_name: "traefik-development"
+    restart: "always"
+    ports:
+      # The HTTP port
+      - "80:80"
+      # The HTTPS port
+      - "443:443"
+      # Traefik Dashboard port
+      - "8080:8080"
+      # Ping port
+      - "8082:8082"
+    tty: true
+    expose:
+      - 80
+      - 443
+      - 8080
+      - 8082
+
+    # Add your DNS Auth. API keys here.
+    environment:
+    - "SERVICE_PROVIDER_API_KEY_FILE=/etc/environment/my_dns_provider_api_key.txt"
+
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+
+      # Static Configuration
+      - "./traefik/traefik.yml:/etc/traefik/traefik.yml"
+
+      # Dynamic Configuration
+      - "./traefik/dynamic.yml:/etc/traefik/dynamic.yml"
+
+      # User Credentials
+      - "./traefik/users.txt:/etc/traefik/users.txt"
+
+      # Storage
+      - "./traefik/storage:/traefik/storage"
+
+      - "traefiklogvol:/var/log/traefik"
+
+    networks:
+      - "net-proxy"
+      - "net-group-1"
+      - "net-group-2"
+      - "net-group-3"
+      - "net-group-4"
+
+  reverse-proxy-production:
+    profiles: ["production"]
+    build:
+      context: "./traefik"
+      dockerfile: Dockerfile
+      args:
+        virtual_host: "myserver.com"
+    image: "traefikcustom:v3.2.1"
+    container_name: "traefik-production"
+    restart: "always"
+    ports:
+      # The HTTP port
+      - "80:80"
+      # # The HTTPS port
+      - "443:443"
+      # Traefik Dashboard port
+      - "8080:8080"
+      # Ping port
+      - "8082:8082"
+    tty: true
+    expose:
+      - 80
+      - 443
+      - 8080
+      - 8082
+    # Add your DNS Auth. API keys here.
+    environment:
+    - "SERVICE_PROVIDER_API_KEY_FILE=/etc/traefik/my_dns_provider_api_key.txt"
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+
+      # Traefik storage
+      - "traefikvol:/traefik/storage"
+
+      # Traefik log
+      - "traefiklogvol:/var/log/traefik"
+
+    networks:
+      - "net-proxy"
+      - "net-group-1"
+      - "net-group-2"
+      - "net-group-3"
+      - "net-group-4"
+
+  fail2ban-development:
+    profiles: ["development"]
+    container_name: fail2ban
+    hostname: fail2ban
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    build:
+      context: "./fail2ban"
+      dockerfile: Dockerfile
+    image: "fail2bancustom:v1.1.0"
+    network_mode: host
+    restart: "always"
+    volumes:
+      - "fail2banvol:/data"
+      - "traefiklogvol:/var/log/traefik:ro"
+    environment:
+      - "TZ=Universal"
+      - "F2B_LOG_TARGET=STDOUT"
+      - "F2B_LOG_LEVEL=INFO"
+      - "F2B_DB_PURGE_AGE=7d"
+      - "IPTABLES_MODE=nft"
+    depends_on:
+      - "reverse-proxy-development"
+
+  fail2ban-production:
+    profiles: ["production"]
+    container_name: fail2ban
+    hostname: fail2ban
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    build:
+      context: "./fail2ban"
+      dockerfile: Dockerfile
+    image: "fail2bancustom:v1.1.0"
+    network_mode: host
+    restart: "always"
+    volumes:
+      - "fail2banvol:/data"
+      - "traefiklogvol:/var/log/traefik:ro"
+    environment:
+      - "TZ=Universal"
+      - "F2B_LOG_TARGET=STDOUT"
+      - "F2B_LOG_LEVEL=INFO"
+      - "F2B_DB_PURGE_AGE=7d"
+      - "IPTABLES_MODE=nft"
+    depends_on:
+      - "reverse-proxy-production"
+
+
+  whoami-development:
+    profiles: ["development"]
+    image: "traefik/whoami"
+    container_name: "whoami"
+    networks:
+      - "net-group-3"
+    restart: "always"
+    expose:
+      - 80
+      - 443
+    labels:
+      traefik.enable: true
+      traefik.http.routers.whoami-https.rule: "Host(`whoami.myserver.com`)"
+      traefik.http.routers.whoami-https.entryPoints: "web-secure"
+      traefik.http.routers.whoami-https.middlewares: "auth@file"
+      traefik.http.routers.whoami-https.tls: true
+      traefik.http.routers.whoami-https.tls.domains[0].main: "whoami.myserver.com"
+      traefik.http.routers.whoami-https.tls.certresolver: "myresolver"
+      traefik.http.routers.whoami-https.service: "whoami-development-myproject"
+    depends_on:
+      - "reverse-proxy-development"
+
+  app1-development:
+    profiles: ["development"]
+    build:
+      context: "./app1"
+      dockerfile: Dockerfile
+      args:
+        virtual_host: "myserver.com"
+    image: "nginximg:1.27.3-bookworm"
+    container_name: "container-app1-development"
+    restart: "always"
+    networks:
+      - "net-group-1"
+    tty: true
+    expose:
+      - 80
+      - 443
+    volumes:
+      - app1vol:/var/log/nginx
+      - type: bind
+        source: "/home/vmuser/dockerfiles/app1/data/www"
+        target: "/usr/share/nginx/html"
+      - type: bind
+        source: "/home/vmuser/dockerfiles/app1/data/images"
+        target: "/usr/share/nginx/images"
+    labels:
+      traefik.enable: true
+      traefik.http.routers.app1-https.rule: "Host(`myserver.com`)"
+      traefik.http.routers.app1-https.entryPoints: "web-secure"
+      traefik.http.routers.app1-https.tls: true
+      traefik.http.routers.app1-https.tls.domains[0].main: "myserver.com"
+      traefik.http.routers.app1-https.tls.certresolver: "myresolver"
+      traefik.http.routers.app1-https.service: "app1-development-myproject"
+    depends_on:
+      - "reverse-proxy-development"
+
+  app1-production:
+    profiles: ["production"]
+    build:
+      context: "./app1"
+      dockerfile: Dockerfile
+      args:
+        virtual_host: "myserver.com"
+    image: "nginximg:1.27.3-bookworm"
+    container_name: "container-app1-production"
+    restart: "always"
+    networks:
+      - "net-group-1"
+    tty: true
+    expose:
+      - 80
+      - 443
+    volumes:
+      - app1vol:/var/log/nginx
+    labels:
+      traefik.enable: true
+      traefik.http.routers.app1-https.rule: "Host(`myserver.com`)"
+      traefik.http.routers.app1-https.entryPoints: "web-secure"
+      traefik.http.routers.app1-https.tls: true
+      traefik.http.routers.app1-https.tls.domains[0].main: "myserver.com"
+      traefik.http.routers.app1-https.tls.certresolver: "myresolver"
+      traefik.http.routers.app1-https.service: "app1-production-myproject"
+    depends_on:
+      - "reverse-proxy-production"
+
+  app2-development:
+    profiles: ["development"]
+    build:
+      context: "./app2"
+      dockerfile: Dockerfile
+      args:
+        virtual_host: "demo1.myserver.com"
+    image: "nginximg2:1.27.3-bookworm"
+    container_name: "container-app2-development"
+    restart: "always"
+    networks:
+      - "net-group-2"
+    tty: true
+    expose:
+      - 80
+      - 443
+    volumes:
+      - app2vol:/var/log/nginx
+      - type: bind
+        source: "/home/vmuser/dockerfiles/app2/data/www"
+        target: "/usr/share/nginx/html"
+      - type: bind
+        source: "/home/vmuser/dockerfiles/app2/data/images"
+        target: "/usr/share/nginx/images"
+    labels:
+      traefik.enable: true
+      traefik.http.routers.app2-https.rule: "Host(`demo1.myserver.com`)"
+      traefik.http.routers.app2-https.entryPoints: "web-secure"
+      traefik.http.routers.app2-https.tls: true
+      traefik.http.routers.app2-https.tls.domains[0].main: "demo1.myserver.com"
+      traefik.http.routers.app2-https.tls.certresolver: "myresolver"
+      traefik.http.routers.app2-https.service: "app2-development-myproject"
+    depends_on:
+      - "reverse-proxy-development"
+
+  app2-production:
+    profiles: ["production"]
+    build:
+      context: "./app2"
+      dockerfile: Dockerfile
+      args:
+        virtual_host: "demo1.myserver.com"
+    image: "nginximg2:1.27.3-bookworm"
+    container_name: "container-app2-production"
+    restart: "always"
+    networks:
+      - "net-group-2"
+    tty: true
+    expose:
+      - 80
+      - 443
+    volumes:
+      - app2vol:/var/log/nginx
+    labels:
+      traefik.enable: true
+      traefik.http.routers.app2-https.rule: "Host(`demo1.myserver.com`)"
+      traefik.http.routers.app2-https.entryPoints: "web-secure"
+      traefik.http.routers.app2-https.tls: true
+      traefik.http.routers.app2-https.tls.domains[0].main: "demo1.myserver.com"
+      traefik.http.routers.app2-https.tls.certresolver: "myresolver"
+      traefik.http.routers.app2-https.service: "app2-production-myproject"
+    depends_on:
+      - "reverse-proxy-production"
+
+  # gatsby-development:
+  #   profiles: ["development"]
+  #   build:
+  #     context: "./gatsby"
+  #     dockerfile: Dockerfile
+  #     args:
+  #       virtual_host: "myserver.com"
+  #   image: "gatsbyimg:5.14.0"
+  #   container_name: "container-gatsby-development"
+  #   restart: "always"
+  #   networks:
+  #     - "net-group-4"
+  #   tty: true
+  #   expose:
+  #     - 80
+  #     - 443
+  #   volumes:
+  #     - gatsbylogvol:/var/log/nginx
+  #     - type: bind
+  #       source: "/home/vmuser/dockerfiles/gatsby/public"
+  #       target: "/usr/share/nginx/html"
+  #   labels:
+  #     traefik.enable: true
+  #     traefik.http.routers.gatsby-https.rule: "Host(`myserver.com`)"
+  #     traefik.http.routers.gatsby-https.entryPoints: "web-secure"
+  #     traefik.http.routers.gatsby-https.tls: true
+  #     traefik.http.routers.gatsby-https.tls.domains[0].main: "myserver.com"
+  #     traefik.http.routers.gatsby-https.tls.certresolver: "myresolver"
+  #     traefik.http.routers.gatsby-https.service: "gatsby-development-myproject"
+  #   depends_on:
+  #     - "reverse-proxy-development"
+
+  # gatsby-production:
+  #   profiles: ["production"]
+  #   build:
+  #     context: "./gatsby"
+  #     dockerfile: Dockerfile
+  #     args:
+  #       virtual_host: "myserver.com"
+  #   image: "gatsbyimg:5.14.0"
+  #   container_name: "container-gatsby-production"
+  #   restart: "always"
+  #   networks:
+  #     - "net-group-4"
+  #   tty: true
+  #   expose:
+  #     - 80
+  #     - 443
+  #   volumes:
+  #     - gatsbylogvol:/var/log/nginx
+  #     - gatsbyvol:/usr/share/nginx/html
+  #   labels:
+  #     traefik.enable: true
+  #     traefik.http.routers.gatsby-https.rule: "Host(`myserver.com`)"
+  #     traefik.http.routers.gatsby-https.entryPoints: "web-secure"
+  #     traefik.http.routers.gatsby-https.tls: true
+  #     traefik.http.routers.gatsby-https.tls.domains[0].main: "myserver.com"
+  #     traefik.http.routers.gatsby-https.tls.certresolver: "myresolver"
+  #     traefik.http.routers.gatsby-https.service: "gatsby-production-myproject"
+  #   depends_on:
+  #     - "reverse-proxy-production"

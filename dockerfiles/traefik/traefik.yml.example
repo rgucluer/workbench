@@ -43,8 +43,8 @@ entryPoints:
           to: traefik
           scheme: https
           permanent: true
-      # middlewares:
-      #   - "auth@file"
+      middlewares:
+        - "auth@file"
 
   ping:
     address: ":8082"
@@ -54,7 +54,6 @@ entryPoints:
           to: ping
           scheme: https
           permanent: true
-
 
 certificatesResolvers:
   myresolver:
@@ -72,7 +71,7 @@ certificatesResolvers:
         # Detailed information : https://go-acme.github.io/lego/dns/
         provider: "my_dns_provider"
         delayBeforeCheck: "60"
-        
+
         # Use following DNS servers to resolve the FQDN authority.
         # Let Hetzner be the the example:
         # https://docs.hetzner.com/dns-console/dns/general/dns-overview/
@@ -117,9 +116,7 @@ accessLog:
         User-Agent: keep
         Authorization: drop
         Content-Type: keep
-    # defaultMode: keep
-    # names:
-    #   ClientUsername: drop
+        # ClientUsername: drop
     # StartUTC: drop
     # Duration: keep
     # RouterName: keep

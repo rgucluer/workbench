@@ -1,18 +1,52 @@
+# Visual Studio Code
+.vscode/
+
+# Github
+.github/
+
 # Ansible
 ansible/inventory
+ansible/tasks/dockerrebuild.yml
+ansible/test*.yml
 
-# Dependency directories
-node_modules/
-jspm_packages/
+# Fail2ban
+dockerfiles/fail2ban/Dockerfile
+dockerfiles/fail2ban/jail.local
 
-# Diagnostic reports (https://nodejs.org/api/report.html)
-report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+# Gatsby
+dockerfiles/gatsby/.cache/
+dockerfiles/gatsby/node_modules/*
+dockerfiles/gatsby/public/*
+dockerfiles/gatsby/static/
+# dockerfiles/gatsby/Dockerfile
+dockerfiles/gatsby/gatsby-config.ts
+dockerfiles/gatsby/gatsby-config.js
+dockerfiles/gatsby/gatsby-node.js
+dockerfiles/gatsby/gatsby-ssr.js
 
-# Docker
-**/docker-compose.yml
+
+# Traefik
+dockerfiles/traefik/storage/
+!dockerfiles/traefik/storage/.gitignore
+dockerfiles/traefik/Dockerfile
+dockerfiles/traefik/dynamic.yml
+dockerfiles/traefik/traefik.yml
+**_api_key.txt
+**users.txt
+
+# Docker Compose
+dockerfiles/compose.yml
 
 # Documents for private use
 self_docs/
+
+# Docker
+**/docker-compose.yml
+**/compose.yml
+
+# Dependency directories
+**/node_modules/
+jspm_packages/
 
 # Environment files
 **/.env
@@ -24,28 +58,11 @@ self_docs/
 # TypeScript v1 declaration files
 typings/
 
-# Traefik
-dockerfiles/traefik/Dockerfile
-dockerfiles/traefik/*traefik.yml
-dockerfiles/traefik/*dynamic.yml
-dockerfiles/traefik/*users.txt
-dockerfiles/traefik/storage/.lego/
-dockerfiles/traefik/storage/log/
-dockerfiles/traefik/storage/acme.json
-dockerfiles/traefik/storage/*_api_key.txt
-dockerfiles/traefik/log/*
-dockerfiles/app3
-
-# Fail2ban
-dockerfiles/fail2ban/jail.local
-
-# Vagrant
-vagrant/.vagrant/
-vagrant/Vagrantfile
-
-# Visual Studio Code
-.vscode/
-
 # Logs
 logs
 *.log
+
+# Diagnostic reports (https://nodejs.org/api/report.html)
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+**/*.old

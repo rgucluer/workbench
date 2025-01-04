@@ -1,40 +1,63 @@
 ---
-all:
+
+prod_servers:
   hosts:
     production:
       ansible_host: 127.0.0.1
       ansible_port: 22
       ansible_connection: ssh
       ansible_user: produser
-      ansible_ssh_private_key_file: ~/.ssh/produser
+      ansible_become: true
+      become_method: sudo
+      ansible_ssh_private_key_file: "/home/local1/.ssh/produserkey"
       docker_profile: production
 
+dev_servers:
+  hosts:
     development:
       ansible_host: 127.0.0.1
       ansible_port: 22
       ansible_connection: ssh
-      ansible_user: vagrant
-      ansible_ssh_private_key_file: ~/.ssh/devuser1
+      ansible_user: vmuser
+      ansible_become: true
+      become_method: sudo
+      ansible_ssh_private_key_file: "/home/local1/.ssh/vmuserkey"
       docker_profile: development
 
+controller_pc:
+  hosts:
     local:
       ansible_connection: local
+      ansible_user: local1
       ansible_become: true
-      ansible_user: enter_your_system_username
+      become_method: sudo
       docker_profile: local
 
+all:
   vars:
     ansible_python_interpreter: /usr/bin/python3
     workbench_full_path: /full/path/to/workbench
 
+    docker_traefik_image_name: traefikcustom
+    docker_traefik_image_version: "v3.2.1"
+    traefik_directory_name: traefik
+
+    docker_fail2ban_image_name: fail2bancustom
+    docker_fail2ban_image_version: "v1.1.0"
+    fail2ban_directory_name: fail2ban
+
     docker_nginx_image_name: nginximg
-    docker_nginx_image_version: "1.25.3"
+    docker_nginx_image_version: "1.27.3-bookworm"
     nginx_directory_name: app1
 
     docker_nginx_image_name_2: nginximg2
-    docker_nginx_image_version_2: "1.25.3"
+    docker_nginx_image_version_2: "1.27.3-bookworm"
     nginx_directory_name_2: app2
-    
-    docker_traefik_image_name: traefikcustom
-    docker_traefik_image_version: "v3.1.2"
-    traefik_directory_name: traefik
+
+    # docker_gatsby_image_name: gatsbyimg
+    # docker_gatsby_image_version: "5.14.0"
+    # gatsby_directory_name: gatsby
+
+
+
+...

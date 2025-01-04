@@ -1,0 +1,219 @@
+---
+
+  - name: Update apt repo and cache
+    ansible.builtin.apt: 
+      update_cache: yes
+      force_apt_get: no
+      cache_valid_time: 3600
+    become: true
+
+  - name: Install required system packages
+    ansible.builtin.apt:
+      pkg:
+        - apt-transport-https 
+        - python3-full
+        - python3-pip
+        - ca-certificates
+        - curl
+        - software-properties-common
+        - gnupg
+        - lsb-release
+        - lego
+        - vim
+        - git
+      state: latest
+      update_cache: false
+    become: true
+
+  - name: Install required system packages
+    ansible.builtin.apt:
+      pkg:
+        - python3-requests
+      state: latest
+      update_cache: false
+    become: true
+
+  - name: UFW - Disable
+    community.general.ufw:
+      state: disabled
+    become: true
+
+  - name: Allow "{{ ansible_port }}"
+    community.general.ufw:
+      rule: allow
+      port: "{{ ansible_port }}"
+    become: true
+
+  - name: Limit "{{ ansible_port }}"
+    community.general.ufw:
+      rule: limit
+      port: "{{ ansible_port }}"
+      proto: tcp
+    become: true
+
+  - name: Allow access to tcp port 80
+    community.general.ufw:
+      rule: allow
+      port: "80"
+      proto: tcp
+    become: true
+
+  - name: Allow access to tcp port 443
+    community.general.ufw:
+      rule: allow
+      port: "443"
+      proto: tcp
+    become: true
+
+  - name: Allow access to tcp port 8080
+    community.general.ufw:
+      rule: allow
+      port: "8080"
+      proto: tcp
+    become: true
+
+  - name: Allow access to tcp port 8082
+    community.general.ufw:
+      rule: allow
+      port: "8082"
+      proto: tcp
+    become: true
+
+  - name: Enable default deny with logging
+    community.general.ufw:
+      state: enabled
+      default: deny
+      logging: "on"
+    become: true
+
+  - name: UFW - Enable
+    community.general.ufw:
+      state: enabled
+    become: true
+      
+  - name: Remove docker.io package
+    ansible.builtin.apt:
+      name: docker.io
+      state: absent
+      update_cache: false
+    become: true
+
+  - name: Remove docker-doc package
+    ansible.builtin.apt:
+      name: docker-doc
+      state: absent
+      update_cache: false
+    become: true
+
+  - name: Remove docker-compose package
+    ansible.builtin.apt:
+      name: docker-compose
+      state: absent
+      update_cache: false
+    become: true
+
+  - name: Remove docker-compose-v2 package
+    ansible.builtin.apt:
+      name: docker-compose-v2
+      state: absent
+      update_cache: false
+    become: true
+
+  - name: Remove podman-docker package
+    ansible.builtin.apt:
+      name: podman-docker
+      state: absent
+      update_cache: false
+    become: true
+
+  - name: Remove containerd package
+    ansible.builtin.apt:
+      name: containerd
+      state: absent
+      update_cache: false
+    become: true
+
+  - name: Remove runc package
+    ansible.builtin.apt:
+      name: runc
+      state: absent
+      update_cache: false
+    become: true
+
+  - name: Remove docker package
+    ansible.builtin.apt:
+      name: docker
+      state: absent
+      update_cache: false
+    become: true
+
+  - name: Remove docker-engine package
+    ansible.builtin.apt:
+      name: docker-engine
+      state: absent
+      update_cache: false
+    become: true
+
+  - name: Add Docker GPG apt Key
+    ansible.builtin.apt_key:
+      url: https://download.docker.com/linux/ubuntu/gpg
+      state: present
+    become: true
+
+  - name: Add Docker Repository
+    ansible.builtin.apt_repository:
+      repo: deb https://download.docker.com/linux/ubuntu jammy stable
+      state: present
+      update_cache: true
+    become: true
+
+  - name: Install docker-ce
+    ansible.builtin.apt:
+      name: docker-ce
+      state: latest
+      update_cache: false
+    become: true
+
+  - name: Install docker-ce-cli
+    ansible.builtin.apt:
+      name: docker-ce-cli
+      state: latest
+      update_cache: false
+    become: true
+
+  - name: Install containerd.io
+    ansible.builtin.apt:
+      name: containerd.io
+      state: latest
+      update_cache: false
+    become: true
+
+  - name: Install docker-buildx-plugin
+    ansible.builtin.apt:
+      name: docker-buildx-plugin
+      state: latest
+      update_cache: false
+    become: true
+
+  - name: Install docker-buildx-plugin
+    ansible.builtin.apt:
+      name: docker-compose-plugin
+      state: latest
+      update_cache: false
+    become: true
+
+  - name: Ensure group docker exists
+    ansible.builtin.group:
+      name: docker
+      state: present
+    become: true
+
+  - name: Add the user () with a bash shell, appending the group docker to the user's groups
+    ansible.builtin.user:
+      name: "{{ ansible_user }}"
+      shell: /bin/bash
+      groups: docker
+      append: yes
+    become: true
+
+...

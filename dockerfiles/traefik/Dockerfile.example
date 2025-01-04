@@ -1,6 +1,6 @@
 # Dockerfile for a custom Traefik image
 # Author: Recep GUCLUER
-FROM traefik:v3.1.2
+FROM traefik:3.2.1
 
 # Install lego
 RUN apk update && apk add --no-cache lego

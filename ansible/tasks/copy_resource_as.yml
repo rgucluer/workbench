@@ -1,0 +1,31 @@
+---
+- name: "Check if resource exists"
+  ansible.builtin.stat:
+    path: "{{ workbench_full_path }}/{{config_item['target']}}"
+  register: file_info
+  become: false
+
+- name: "Resource exists"
+  ansible.builtin.debug:
+    msg: "{{ config_item['target'] }} exists"
+  become: false
+  when: file_info.stat.exists
+
+- name: "Resource does not exist"
+  ansible.builtin.debug:
+    msg: "{{ config_item['target'] }} does not exist"
+  become: false
+  when: not file_info.stat.exists
+
+- name: "Copy resource"
+  become: false
+  ansible.builtin.copy:
+    src: "{{ workbench_full_path }}/{{ config_item['source'] }}"
+    dest: "{{ workbench_full_path }}/{{ config_item['target'] }}"
+    owner: "{{ansible_user}}"
+    group: "{{ansible_user}}"
+    mode: u=rw,g=rw,o-rwx
+  tags:
+    - simple_copy
+  become: false
+  when: not file_info.stat.exists
