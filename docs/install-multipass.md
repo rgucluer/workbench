@@ -56,11 +56,10 @@ ansible-playbook workbench.yml
 "BECOME password" is the password of the Controller PC system user.
 
 ### Create a Virtual Machine with Canonical Multipass
-```bash
-cd <workbench_directory>/multipass/cloud-init
-```
 
 Edit cloud-config.yaml. Enter ssh_authorized_keys (..... represents the skipped sections). 
+
+<workbench_directory>/multipass/cloud-init/cloud-config.yaml
 ```yaml
 #cloud-config
 .....

@@ -12,6 +12,7 @@ ssh-add ~/.ssh/vmuserkey
 ### Edit /etc/hosts file. 
 Enter IP address of Virtual Machine for your development domains
 
+/etc/hosts
 ```bash
 <virtual_machine_IP> <domain_name_1>
 <virtual_machine_IP> demo1.<domain_name_1>
@@ -50,6 +51,8 @@ For a Gatsby blog:
 - Run gatsby develop
 ```bash
 cd <workbench_directory>/dockerfiles/gatsby
+```
+```bash
 gatsby develop
 ```
 - Change content of dockerfiles/gatsby/content/blog/my-second-post/index.md
@@ -62,6 +65,8 @@ gatsby develop
 
 ```bash
 cd <workbench_full_path>/ansible
+```
+```bash
 ansible-playbook dev-rebuild.yml
 ```
 

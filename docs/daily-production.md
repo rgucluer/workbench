@@ -36,6 +36,16 @@ COMPOSE_FILE="compose.yml"
 COMPOSE_PROFILES="production"
 ```
 
+### If Gatsby Blog is installed
+
+Run gatsby build
+```bash
+cd <workbench_directory>/dockerfiles/gatsby
+```
+```bash
+gatsby build
+```
+
 ## Rebuild the Dswebdocs Workbench:
 
 *** Warning: Backup first ***
