@@ -32,14 +32,15 @@
 
 - name: Remove existing services
   community.docker.docker_compose_v2:
-    project_src: /home/{{ ansible_user }}/dockerfiles
+    project_src: "/home/{{ ansible_user }}/dockerfiles"
     state: "absent"
+    profiles: [ "{{ docker_profile }}" ]
     remove_orphans: true
     remove_volumes: true
     remove_images: "all"
   when: dir_data.stat.exists and dir_data.stat.isdir
   become: true
-  # ignore_errors: yes
+  ignore_errors: yes
 
 - name: Prune dangling images
   community.docker.docker_prune:
@@ -192,6 +193,7 @@
   community.docker.docker_compose_v2:
     state: "present"
     project_src: "/home/{{ ansible_user }}/dockerfiles"
+    profiles: [ "{{ docker_profile }}" ]
     pull: "missing"
     build: "policy"
     recreate: "auto"

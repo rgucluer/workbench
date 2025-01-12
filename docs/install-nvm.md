@@ -19,6 +19,10 @@ nvm install 22.12.0
 ```
 
 ```cmd
+nvm alias default v22.12.0
+```
+
+```cmd
 node -v
 v22.12.0
 ```

@@ -130,9 +130,12 @@ sudo nano /etc/ssh/sshd_config
 Edit the file according to the following lines. Add the AllowUsers row to the end of file, replace <server_user> with your server user name without the angle brackets.
 
 ```bash
+Port <server_ssh_port>
 PermitRootLogin no
+PubkeyAuthentication yes
 PasswordAuthentication no
 KbdInteractiveAuthentication no
+UsePAM yes
 X11Forwarding no
 TCPKeepAlive yes
 ClientAliveInterval 45
@@ -196,7 +199,7 @@ prod_servers:
       ansible_user: <server_user>
       ansible_become: true
       become_method: sudo
-      ansible_ssh_private_key_file: "/home/<server_user>/.ssh/vmuserkey"
+      ansible_ssh_private_key_file: "/home/<server_user>/.ssh/<prod_ssh_key>"
       docker_profile: production
 ```
 
