@@ -59,3 +59,10 @@ ansible-playbook prod-rebuild.yml
 ```
 
 Enter BECOME password for <server_user>.
+
+Check
+- https://<domain_name_1>
+- https://<domain_name_2>
+- https://<domain_name_3>
+- https://traefik.<domain_name_1>:8082/ping/
+- https://traefik.<domain_name_1>:8080/dashboard/

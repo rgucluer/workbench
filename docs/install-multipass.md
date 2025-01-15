@@ -64,6 +64,9 @@ Edit cloud-config.yaml. Enter ssh_authorized_keys (..... represents the skipped 
 #cloud-config
 .....
 
+hostname: devserver1
+fqdn: devserver1.myserver.com
+
 # User setup configuration
 users:
     .....

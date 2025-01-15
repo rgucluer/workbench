@@ -60,7 +60,7 @@ ping myserver.com
 ping enter_your_domain_name.com
 ```
 
-Open a terminal. You need to copy from the codeboxes below, paste into the terminal, and execute with pressing ENTER. Maybe it will be even better if the reader knows about basic GNU/Linux OS usage.
+Open a terminal. You need to copy from the codeboxes below, paste into the terminal, and execute with pressing ENTER. Maybe it will be even better if the reader knows about basic Linux OS usage.
 
 ## Update apt packages
 We start with updating the Controller PC apt packages.

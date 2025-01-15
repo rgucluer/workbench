@@ -38,6 +38,7 @@ COMPOSE_PROFILES="development"
 multipass start <vm_instance_name>
 ```
 
+### Change content
 Modify one of the files below:
   - dockerfiles/app1/data/www/index.html
   - dockerfiles/app2/data/www/index.html
@@ -61,6 +62,12 @@ gatsby develop
 - Check http://localhost:8000/my-second-post/
 - Stop gatsby develop with pressing CTRL+C
 
+```bash
+gatsby build
+```
+This build step updates content we see over domain name.
+
+
 ## You can rebuild the Dswebdocs Workbench:
 
 ```bash
@@ -76,10 +83,11 @@ Check
 - https://<domain_name_1>
 - https://<domain_name_2>
 - https://<domain_name_3>
+- https://traefik.<domain_name_1>:8082/ping/
+- https://traefik.<domain_name_1>:8080/dashboard/
+- https://whoami.<domain_name_1>
 
 ## End of the day
-
-
 ### Stop Virtual Machine
 ```bash
 multipass stop <vm_instance_name>
