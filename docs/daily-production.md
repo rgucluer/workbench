@@ -66,3 +66,5 @@ Check
 - https://<domain_name_3>
 - https://traefik.<domain_name_1>:8082/ping/
 - https://traefik.<domain_name_1>:8080/dashboard/
+
+( Press [Shift]+[F5] if necessary )

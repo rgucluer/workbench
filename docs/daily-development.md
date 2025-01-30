@@ -60,6 +60,7 @@ gatsby develop
 
 - After modification, wait a few seconds. 
 - Check http://localhost:8000/my-second-post/
+  - ( Press [Shift]+[F5] if necessary )
 - Stop gatsby develop with pressing CTRL+C
 
 ```bash
@@ -86,6 +87,8 @@ Check
 - https://traefik.<domain_name_1>:8082/ping/
 - https://traefik.<domain_name_1>:8080/dashboard/
 - https://whoami.<domain_name_1>
+
+( Press [Shift]+[F5] if necessary )
 
 ## End of the day
 ### Stop Virtual Machine

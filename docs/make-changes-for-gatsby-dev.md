@@ -120,12 +120,14 @@ services:
       ......
       - type: bind
         source: "/home/vmuser/dockerfiles/gatsby/public"
+        ......
     labels:
       traefik.enable: true
       traefik.http.routers.gatsby-https.rule: "Host(`myserver.com`)"
       .....
       traefik.http.routers.gatsby-https.tls.domains[0].main: "myserver.com"
       ......
+      traefik.http.routers.gatsby-https.service: "gatsby-development-myproject"
 ```
 
 Now, you can continue to [Rebuild the project](rebuild-dev.md).

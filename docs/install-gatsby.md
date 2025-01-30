@@ -4,10 +4,7 @@
 ```bash
 npm install -g gatsby-cli
 ```
-There is a notice of new npm. To install the new version:
-```bash
-npm install -g npm@11.0.0
-```
+
 - Choose one:
   - [Use an existing Gatsby Blog project](existing-gatsby-blog.md) 
   - [Create a new blog with gatsby command line interface](new-gatsby-blog.md)
@@ -62,3 +59,8 @@ In order gatsby develop to work, node packages must already be installed. For an
 
 Now, you can continue to [Production Environment installation](install-prod-2404.md).
 
+### References:
+- Gatsby
+  - Documentation 
+    - https://www.gatsbyjs.com/docs
+    - https://www.gatsbyjs.com/docs/tutorial/getting-started/part-0/

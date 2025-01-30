@@ -46,7 +46,7 @@ services:
 
     # Add your DNS Auth. API keys here.
     environment:
-    - "SERVICE_PROVIDER_API_KEY_FILE=/etc/environment/my_dns_provider_api_key.txt"
+    - "SERVICE_PROVIDER_API_KEY_FILE=/traefik/storage/my_dns_provider_api_key.txt"
 
     volumes:
       # So that Traefik can listen to the Docker events
@@ -100,7 +100,7 @@ services:
       - 8082
     # Add your DNS Auth. API keys here.
     environment:
-    - "SERVICE_PROVIDER_API_KEY_FILE=/etc/traefik/my_dns_provider_api_key.txt"
+    - "SERVICE_PROVIDER_API_KEY_FILE=/traefik/storage/my_dns_provider_api_key.txt"
     volumes:
       # So that Traefik can listen to the Docker events
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
