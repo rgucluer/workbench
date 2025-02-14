@@ -46,7 +46,8 @@ services:
 
     # Add your DNS Auth. API keys here.
     environment:
-    - "SERVICE_PROVIDER_API_KEY_FILE=/traefik/storage/my_dns_provider_api_key.txt"
+      - "TZ=Universal"
+      - "SERVICE_PROVIDER_API_KEY_FILE=/traefik/storage/my_dns_provider_api_key.txt"
 
     volumes:
       # So that Traefik can listen to the Docker events
@@ -100,7 +101,8 @@ services:
       - 8082
     # Add your DNS Auth. API keys here.
     environment:
-    - "SERVICE_PROVIDER_API_KEY_FILE=/traefik/storage/my_dns_provider_api_key.txt"
+      - "TZ=Universal"
+      - "SERVICE_PROVIDER_API_KEY_FILE=/traefik/storage/my_dns_provider_api_key.txt"
     volumes:
       # So that Traefik can listen to the Docker events
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
@@ -188,6 +190,8 @@ services:
       traefik.http.routers.whoami-https.tls.domains[0].main: "whoami.myserver.com"
       traefik.http.routers.whoami-https.tls.certresolver: "myresolver"
       traefik.http.routers.whoami-https.service: "whoami-development-myproject"
+    environment:
+      - "TZ=Universal"
     depends_on:
       - "reverse-proxy-development"
 
@@ -223,6 +227,8 @@ services:
       traefik.http.routers.app1-https.tls.domains[0].main: "myserver.com"
       traefik.http.routers.app1-https.tls.certresolver: "myresolver"
       traefik.http.routers.app1-https.service: "app1-development-myproject"
+    environment:
+      - "TZ=Universal"
     depends_on:
       - "reverse-proxy-development"
 
@@ -252,6 +258,8 @@ services:
       traefik.http.routers.app1-https.tls.domains[0].main: "myserver.com"
       traefik.http.routers.app1-https.tls.certresolver: "myresolver"
       traefik.http.routers.app1-https.service: "app1-production-myproject"
+    environment:
+      - "TZ=Universal"
     depends_on:
       - "reverse-proxy-production"
 
@@ -287,6 +295,8 @@ services:
       traefik.http.routers.app2-https.tls.domains[0].main: "demo1.myserver.com"
       traefik.http.routers.app2-https.tls.certresolver: "myresolver"
       traefik.http.routers.app2-https.service: "app2-development-myproject"
+    environment:
+      - "TZ=Universal"
     depends_on:
       - "reverse-proxy-development"
 
@@ -316,6 +326,8 @@ services:
       traefik.http.routers.app2-https.tls.domains[0].main: "demo1.myserver.com"
       traefik.http.routers.app2-https.tls.certresolver: "myresolver"
       traefik.http.routers.app2-https.service: "app2-production-myproject"
+    environment:
+      - "TZ=Universal"
     depends_on:
       - "reverse-proxy-production"
 
@@ -348,6 +360,8 @@ services:
   #     traefik.http.routers.gatsby-https.tls.domains[0].main: "myserver.com"
   #     traefik.http.routers.gatsby-https.tls.certresolver: "myresolver"
   #     traefik.http.routers.gatsby-https.service: "gatsby-development-myproject"
+  #   environment:
+  #     - "TZ=Universal"
   #   depends_on:
   #     - "reverse-proxy-development"
 
@@ -378,5 +392,7 @@ services:
   #     traefik.http.routers.gatsby-https.tls.domains[0].main: "myserver.com"
   #     traefik.http.routers.gatsby-https.tls.certresolver: "myresolver"
   #     traefik.http.routers.gatsby-https.service: "gatsby-production-myproject"
+  #   environment:
+  #     - "TZ=Universal"
   #   depends_on:
   #     - "reverse-proxy-production"

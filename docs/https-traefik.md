@@ -103,7 +103,7 @@ services:
 
     # Add your DNS Auth. API keys here.
     environment:
-      - "SERVICE_PROVIDER_API_KEY_FILE=/etc/environment/my_dns_provider_api_key.txt"
+      - "SERVICE_PROVIDER_API_KEY_FILE=/traefik/storage/my_dns_provider_api_key.txt"
 
 ```
 
