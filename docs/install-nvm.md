@@ -15,25 +15,23 @@ If the result is "nvm" then nvm installation is complete.
 ### Install Node
 
 ```cmd
-nvm install 21
+nvm install 20
 ```
 
 ```cmd
-nvm alias default v21
+nvm use v20
+nvm alias default v20
 ```
 
 ```cmd
 node -v
-v21.7.3
+v20.17.0
 ```
 
 ```cmd
-nvm which 21
-/home/local1/.nvm/versions/node/v21.7.3/bin/node
+nvm which v20
+/home/local1/.nvm/versions/node/v20.17.0/bin/node
 ```
-
-[Back to Installation of Development Environment](install-dev-2404.md#add-a-gatsby-blog-to-the-dswebdocs-workbench)
-
 
 -----
 References:

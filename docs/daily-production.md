@@ -17,13 +17,10 @@ ssh-add ~/.ssh/<github_ssh_key>
 Comment out domain names in /etc/hosts file
 
 ```bash
-# <virtual_machine_IP> <domain_name_1>
-# <virtual_machine_IP> demo1.<domain_name_1>
-# <virtual_machine_IP> whoami.<domain_name_1>
-# <virtual_machine_IP> traefik.<domain_name_1>
-
-# If you installed a Gatsby blog
-#<virtual_machine_IP> <domain_name_3>
+#<virtual_machine_IP> traefik.<domain_name_1>
+#<virtual_machine_IP> whoami.<domain_name_1>
+#<virtual_machine_IP> demo1.<domain_name_1>
+#<virtual_machine_IP> <domain_name_1>
 ```
 
 ### Edit dockerfiles/.env file
@@ -34,16 +31,6 @@ COMPOSE_PROJECT_NAME="myproject"
 COMPOSE_FILE="compose.yml"
 # COMPOSE_PROFILES="development"
 COMPOSE_PROFILES="production"
-```
-
-### If Gatsby Blog is installed
-
-Run gatsby build
-```bash
-cd <workbench_directory>/dockerfiles/gatsby
-```
-```bash
-gatsby build
 ```
 
 ## Rebuild the Dswebdocs Workbench:
@@ -63,7 +50,6 @@ Enter BECOME password for <server_user>.
 Check
 - https://<domain_name_1>
 - https://<domain_name_2>
-- https://<domain_name_3>
 - https://traefik.<domain_name_1>:8082/ping/
 - https://traefik.<domain_name_1>:8080/dashboard/
 

@@ -5,10 +5,10 @@
 - Virtualization enabled.
 - For Letsencrypt HTTPS support
   - A valid registered domain name.
-- A text editor, or similar application.
+- A text editor
   - Some best practices for editing YAML files:
     - Indentation with spaces, tabs are forbidden.
-    - Recommended number of spaces for a tab: 2
+    - Recommended number of spaces for indentation: 2
   
 ### Variables:
 When you see these variables through the document , enter the values valid for your setup.
@@ -37,7 +37,6 @@ When you see these variables through the document , enter the values valid for y
 
 - domain_name_1: myserver.com
 - domain_name_2: demo1.myserver.com
-- domain_name_3: blog.myserver.com
 - Domain names controlled by you. Defined in your /etc/hosts . 
 
 - compose_project_name: myproject
@@ -273,10 +272,6 @@ multipass stop <vm_instance_name>
 
 Now, you can continue to [Production Environment installation](install-prod-2404.md).
 
-Or, you can ...
-
-## [Add a Gatsby Blog to the Dswebdocs Workbench](install-gatsby.md)
-
 [Back to README](../README.md)
 
 TODO: 
@@ -305,7 +300,4 @@ TODO:
 
 - Traefik
   - https://doc.traefik.io/traefik/https/acme/
-
-- Gatsby
-  - Documentation https://www.gatsbyjs.com/docs 
 

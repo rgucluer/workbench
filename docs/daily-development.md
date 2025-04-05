@@ -14,13 +14,10 @@ Enter IP address of Virtual Machine for your development domains
 
 /etc/hosts
 ```bash
-<virtual_machine_IP> <domain_name_1>
-<virtual_machine_IP> demo1.<domain_name_1>
-<virtual_machine_IP> whoami.<domain_name_1>
 <virtual_machine_IP> traefik.<domain_name_1>
-
-# If you installed a Gatsby blog
-<virtual_machine_IP> <domain_name_3>
+<virtual_machine_IP> whoami.<domain_name_1>
+<virtual_machine_IP> demo1.<domain_name_1>
+<virtual_machine_IP> <domain_name_1>
 ```
 
 ### Edit dockerfiles/.env file
@@ -48,27 +45,6 @@ After modification, wait a few seconds.
 Check, update the page (Shift + F5):
 https://<domain_name_1>
 
-For a Gatsby blog:
-- Run gatsby develop
-```bash
-cd <workbench_directory>/dockerfiles/gatsby
-```
-```bash
-gatsby develop
-```
-- Change content of dockerfiles/gatsby/content/blog/my-second-post/index.md
-
-- After modification, wait a few seconds. 
-- Check http://localhost:8000/my-second-post/
-  - ( Press [Shift]+[F5] if necessary )
-- Stop gatsby develop with pressing CTRL+C
-
-```bash
-gatsby build
-```
-This build step updates content we see over domain name.
-
-
 ## You can rebuild the Dswebdocs Workbench:
 
 ```bash
@@ -83,7 +59,6 @@ BECOME password is for virtual machine user vmuser.
 Check
 - https://<domain_name_1>
 - https://<domain_name_2>
-- https://<domain_name_3>
 - https://traefik.<domain_name_1>:8082/ping/
 - https://traefik.<domain_name_1>:8080/dashboard/
 - https://whoami.<domain_name_1>

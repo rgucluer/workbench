@@ -21,7 +21,7 @@ When you see these variables through the document , enter the values valid for y
     - This directory holds dswebdocs workbench project.
   - workbench_directory: 
     - /home/<local_user>/<local_workspace>/<local_project_dir>
-    - /home/produser1/workspace/workbench
+    - /home/local1/workspace/workbench
     - Variable holds the full path to dswebdocs workbench project.
 
 - Virtual Private Server (VPS)
@@ -36,8 +36,7 @@ When you see these variables through the document , enter the values valid for y
 
 - domain_name_1: myserver.com
 - domain_name_2: demo1.myserver.com
-- domain_name_3: blog.myserver.com
-  - Domain names controlled by you. Defined, and active in your DNS management system. Not defined in /etc/hosts (At least commented out).
+- Domain names controlled by you. Defined, and active in your DNS management system. Not defined in /etc/hosts (At least commented out for production use).
 
 - compose_project_name: myproject
 - my_dns_provider: hetzner
@@ -74,7 +73,7 @@ Add your server user ssh key to ssh agent
 ssh-add ~/.ssh/<prod_ssh_key>
 ```
 
-If there is a non-root user with sudo privileges on the server, connect to server with that user. Then continue with "Update apt packages" step.
+If there is a non-root user with sudo privileges on the server, connect to server with that user. Then continue with "On VPS: Update apt packages" step.
 
 Else,
 
@@ -181,8 +180,6 @@ sudo nano /etc/hosts
 #<virtual_machine_IP> demo1.<domain_name_1>
 #<virtual_machine_IP> whoami.<domain_name_1>
 #<virtual_machine_IP> traefik.<domain_name_1>
-# If gatsby blog is installed
-#<virtual_machine_IP> <domain_name_3>
 ```
 
 ## On Controller PC: Edit Ansible inventory file.
@@ -236,11 +233,6 @@ Press [CTRL] + [d] to end ssh session.
 
 ## [Implement HTTPS, and setup Traefik](https-traefik-production.md)
 
-## If Gatsby Blog is installed 
-- We will not install node, and nvm on Virtual Private Server.
-  - We installed them to use gatsby develop. We will upload and build images inside Virtual Private Server .
-- We will use the project we created in development.
-
 ## Rebuild,and run the project on Production Server
 
 ### On Controller PC:
@@ -259,9 +251,6 @@ http://<domain_name_1>
 
 http://<domain_name_2>
 
-If you add a Gatsby Blog
-http://<domain_name_3>
-
 http://traefik.<domain_name_1>:8082/ping/
 
 https://traefik.<domain_name_1>:8080/dashboard/
@@ -271,16 +260,6 @@ These pages must run without problem at this point. Let's modify the index.html 
 
 ## Edit a source file
 - Edit ~/<local_workspace>/<local_project_dir>/dockerfiles/app1/data/www/index.html file with a text editor , make some changes in content, and save the file.
-
-If Gatsby is installed:
-- Change content, dockerfiles/gatsby/content/blog/hello-world/index.md
-- Build Gatsby
-```bash
-cd <workbench_full_path>/dockerfiles/gatsby
-```
-```bash
-gatsby build
-```
 
 In production environment, we must do the following to update production server.
   - Stop docker containers, delete containers, delete volumes

@@ -4,8 +4,6 @@ volumes:
   fail2banvol:
   app1vol:
   app2vol:
-  gatsbyvol:
-  gatsbylogvol:
 
 networks:
   default:
@@ -14,7 +12,6 @@ networks:
   net-group-1:
   net-group-2:
   net-group-3:
-  net-group-4:
   net-group-notset:
 
 services:
@@ -72,7 +69,6 @@ services:
       - "net-group-1"
       - "net-group-2"
       - "net-group-3"
-      - "net-group-4"
 
   reverse-proxy-production:
     profiles: ["production"]
@@ -118,7 +114,6 @@ services:
       - "net-group-1"
       - "net-group-2"
       - "net-group-3"
-      - "net-group-4"
 
   fail2ban-development:
     profiles: ["development"]
@@ -330,69 +325,3 @@ services:
       - "TZ=Universal"
     depends_on:
       - "reverse-proxy-production"
-
-  # gatsby-development:
-  #   profiles: ["development"]
-  #   build:
-  #     context: "./gatsby"
-  #     dockerfile: Dockerfile
-  #     args:
-  #       virtual_host: "myserver.com"
-  #   image: "gatsbyimg:5.14.0"
-  #   container_name: "container-gatsby-development"
-  #   restart: "always"
-  #   networks:
-  #     - "net-group-4"
-  #   tty: true
-  #   expose:
-  #     - 80
-  #     - 443
-  #   volumes:
-  #     - gatsbylogvol:/var/log/nginx
-  #     - type: bind
-  #       source: "/home/vmuser/dockerfiles/gatsby/public"
-  #       target: "/usr/share/nginx/html"
-  #   labels:
-  #     traefik.enable: true
-  #     traefik.http.routers.gatsby-https.rule: "Host(`myserver.com`)"
-  #     traefik.http.routers.gatsby-https.entryPoints: "web-secure"
-  #     traefik.http.routers.gatsby-https.tls: true
-  #     traefik.http.routers.gatsby-https.tls.domains[0].main: "myserver.com"
-  #     traefik.http.routers.gatsby-https.tls.certresolver: "myresolver"
-  #     traefik.http.routers.gatsby-https.service: "gatsby-development-myproject"
-  #   environment:
-  #     - "TZ=Universal"
-  #   depends_on:
-  #     - "reverse-proxy-development"
-
-  # gatsby-production:
-  #   profiles: ["production"]
-  #   build:
-  #     context: "./gatsby"
-  #     dockerfile: Dockerfile
-  #     args:
-  #       virtual_host: "myserver.com"
-  #   image: "gatsbyimg:5.14.0"
-  #   container_name: "container-gatsby-production"
-  #   restart: "always"
-  #   networks:
-  #     - "net-group-4"
-  #   tty: true
-  #   expose:
-  #     - 80
-  #     - 443
-  #   volumes:
-  #     - gatsbylogvol:/var/log/nginx
-  #     - gatsbyvol:/usr/share/nginx/html
-  #   labels:
-  #     traefik.enable: true
-  #     traefik.http.routers.gatsby-https.rule: "Host(`myserver.com`)"
-  #     traefik.http.routers.gatsby-https.entryPoints: "web-secure"
-  #     traefik.http.routers.gatsby-https.tls: true
-  #     traefik.http.routers.gatsby-https.tls.domains[0].main: "myserver.com"
-  #     traefik.http.routers.gatsby-https.tls.certresolver: "myresolver"
-  #     traefik.http.routers.gatsby-https.service: "gatsby-production-myproject"
-  #   environment:
-  #     - "TZ=Universal"
-  #   depends_on:
-  #     - "reverse-proxy-production"

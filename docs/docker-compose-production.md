@@ -58,23 +58,4 @@ services:
     traefik.http.routers.app2-https.tls.domains[0].main: "demo1.myserver.com"
 ```
 
-### On Controller PC: Uncomment and enter domain address in compose.yml
-If Gatsby blog is installed then uncomment the related section in compose.yml and enter domain address .
-<workbench_directory>/dockerfiles/compose.yml
-```yaml
-  gatsby-production:
-    profiles: ["production"]
-    build:
-      .....
-      args:
-        virtual_host: "blog.myserver.com"
-  .....
-  labels:
-    .....
-    traefik.http.routers.gatsby-https.rule: "Host(`blog.myserver.com`)"
-    .....
-    traefik.http.routers.gatsby-https.tls.domains[0].main: "blog.myserver.com"
-    .....
-```
-
 Back to [Install Production Environment](install-prod-2404.md#docker-compose-settings)

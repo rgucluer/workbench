@@ -54,10 +54,4 @@ all:
     docker_nginx_image_version_2: "1.27.3-bookworm"
     nginx_directory_name_2: app2
 
-    # docker_gatsby_image_name: gatsbyimg
-    # docker_gatsby_image_version: "5.14.0"
-    # gatsby_directory_name: gatsby
-
-
-
 ...

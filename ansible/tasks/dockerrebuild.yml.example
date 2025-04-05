@@ -62,12 +62,18 @@
     state: directory
     owner: "{{ ansible_user }}"
     group: "{{ ansible_user }}"
-    mode: "0640"
+    mode: "0740"
   when: not dir_data.stat.exists
 
 - name: Wait for a few seconds
   ansible.builtin.pause:
     seconds: "2"
+
+# Check if dockerfiles directory exists
+- name: Checking if a directory exists
+  stat:
+    path: /home/{{ ansible_user }}/dockerfiles
+  register: dir_data
 
 # Upload files
 - name: Upload dockerfiles directory with rsync
@@ -80,10 +86,7 @@
     group: false
     links: true
     mode: push
-    owner: false
-    perms: true
     private_key: "{{ ansible_ssh_private_key_file }}"
-    recursive: true
     set_remote_user: true
     src: "{{ workbench_full_path }}/dockerfiles"
     rsync_path: "/usr/bin/rsync"
@@ -113,18 +116,6 @@
     repository: "{{ docker_nginx_image_name_2 }}:{{ docker_nginx_image_version_2 }}"
     source: build
     tag: "{{ docker_nginx_image_version_2 }}"
-    push: false
-
-- name: Build gatsby image
-  community.docker.docker_image:
-    name: "{{ docker_gatsby_image_name }}"
-    build:
-      dockerfile: Dockerfile
-      path: "/home/{{ ansible_user }}/dockerfiles/{{ gatsby_directory_name }}"
-    state: present
-    repository: "{{ docker_gatsby_image_name }}:{{ docker_gatsby_image_version }}"
-    source: build
-    tag: "{{ docker_gatsby_image_version }}"
     push: false
 
 - name: Build fail2ban image
