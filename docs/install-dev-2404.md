@@ -220,10 +220,16 @@ ansible-playbook dev-installdocker.yml
 Will ask "BECOME password" for Virtual Machine user.
 We run Ansible commands on Controller PC, which make changes in VM via a ssh connection.
 
-Reboot the VM to enable recently made changes.
+Stop, and start the VM to enable recently made changes.
 ```bash
-multipass restart dwvm
+multipass stop dwvm
 ```
+
+```bash
+multipass start dwvm
+```
+
+I do not use restart because it unmounts drives.
 
 Test docker installation.
 Add ssh key to ssh agent:
