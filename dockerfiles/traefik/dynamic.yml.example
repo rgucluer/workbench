@@ -2,12 +2,12 @@
 
 http:
   routers:
-    reverse-proxy-http:
-      # http://traefik.myserver.com:8080/dashboard/
-      rule: Host(`traefik.myserver.com`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))
-      entryPoints: 
-        - "traefik"
-      service: "api@internal"
+    # reverse-proxy-http:
+    #   # http://traefik.myserver.com:8080/dashboard/
+    #   rule: Host(`traefik.myserver.com`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))
+    #   entryPoints: 
+    #     - "traefik"
+    #   service: "api@internal"
 
     reverse-proxy-https:
       # https://traefik.myserver.com:8080/dashboard/

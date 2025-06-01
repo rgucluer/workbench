@@ -6,7 +6,7 @@
   - Access to root user, or a user with sudo privileges.
     - Ability to connect to server with ssh.
     - There are good tutorials you can follow on Cloud Providers. There are links below.
-  - Finish the previous steps in "[Installation of development environment](./install_dev.md)" .
+  - Finish the previous steps in "[Installation of development environment](./install-dev-2404.md)" .
   
 
 ## Variables:

@@ -14,9 +14,8 @@ May not be suitable for production use.
 - [Production Environment](docs/install-prod-2404.md)
 
 ## Daily Usage
-### [Dswebdocs Workbench daily usage as development environment](docs/daily-development.md)
-
-### [Dswebdocs Workbench daily usage as production environment](docs/daily-production.md)
+- [Dswebdocs Workbench daily usage as development environment](docs/daily-development.md)
+- [Dswebdocs Workbench daily usage as production environment](docs/daily-production.md)
 
 -----
 

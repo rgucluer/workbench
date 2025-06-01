@@ -13,3 +13,5 @@ cd <workbench_directory>/ansible
 ansible-playbook dev-rebuild.yml
 ```
 Will ask "BECOME password" for Virtual Machine user.
+
+Back to [Development Environment](install-dev-2404.md#rebuild-the-project)

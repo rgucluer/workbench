@@ -38,20 +38,20 @@ all:
     ansible_python_interpreter: /usr/bin/python3
     workbench_full_path: /full/path/to/workbench
 
-    docker_traefik_image_name: traefikcustom
-    docker_traefik_image_version: "v3.2.1"
-    traefik_directory_name: traefik
+    docker_traefik_image_name: "traefikcustom"
+    docker_traefik_image_version: "v3.4.1.build.1"
+    traefik_directory_name: "traefik"
 
-    docker_fail2ban_image_name: fail2bancustom
+    docker_fail2ban_image_name: "fail2bancustom"
     docker_fail2ban_image_version: "v1.1.0"
-    fail2ban_directory_name: fail2ban
+    fail2ban_directory_name: "fail2ban"
 
-    docker_nginx_image_name: nginximg
+    docker_nginx_image_name: "nginximg"
     docker_nginx_image_version: "1.27.3-bookworm"
-    nginx_directory_name: app1
+    nginx_directory_name: "app1"
 
-    docker_nginx_image_name_2: nginximg2
+    docker_nginx_image_name_2: "nginximg2"
     docker_nginx_image_version_2: "1.27.3-bookworm"
-    nginx_directory_name_2: app2
+    nginx_directory_name_2: "app2"
 
 ...

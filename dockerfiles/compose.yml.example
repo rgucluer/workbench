@@ -1,7 +1,7 @@
 volumes:
   traefikvol:
   traefiklogvol:
-  fail2banvol:
+  # fail2banvol:
   app1vol:
   app2vol:
 
@@ -20,9 +20,7 @@ services:
     build:
       context: "./traefik"
       dockerfile: Dockerfile
-      args:
-        virtual_host: "myserver.com"
-    image: "traefikcustom:v3.2.1"
+    image: "traefikcustom:v3.4.1.build.1"
     container_name: "traefik-development"
     restart: "always"
     ports:
@@ -45,7 +43,9 @@ services:
     environment:
       - "TZ=Universal"
       - "SERVICE_PROVIDER_API_KEY_FILE=/traefik/storage/my_dns_provider_api_key.txt"
-
+      - "EMAIL_FILE=/traefik/storage/traefik_email.txt"
+      - "DNS_FILE=/traefik/storage/traefik_dns.txt"
+      - "PING_ADDRESS=https://traefik.myserver.com:8082/ping"
     volumes:
       # So that Traefik can listen to the Docker events
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
@@ -70,14 +70,19 @@ services:
       - "net-group-2"
       - "net-group-3"
 
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f https://traefik.myserver.com:8082/ping || exit 1"]
+      interval: 30s
+      timeout: 30s
+      retries: 3
+      start_period: 20s
+
   reverse-proxy-production:
     profiles: ["production"]
     build:
       context: "./traefik"
       dockerfile: Dockerfile
-      args:
-        virtual_host: "myserver.com"
-    image: "traefikcustom:v3.2.1"
+    image: "traefikcustom:v3.4.1.build.1"
     container_name: "traefik-production"
     restart: "always"
     ports:
@@ -95,10 +100,15 @@ services:
       - 443
       - 8080
       - 8082
+    
     # Add your DNS Auth. API keys here.
     environment:
       - "TZ=Universal"
       - "SERVICE_PROVIDER_API_KEY_FILE=/traefik/storage/my_dns_provider_api_key.txt"
+      - "EMAIL_FILE=/traefik/storage/traefik_email.txt"
+      - "DNS_FILE=/traefik/storage/traefik_dns.txt"
+      - "PING_ADDRESS=https://traefik.myserver.com:8082/ping"
+
     volumes:
       # So that Traefik can listen to the Docker events
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
@@ -115,56 +125,64 @@ services:
       - "net-group-2"
       - "net-group-3"
 
-  fail2ban-development:
-    profiles: ["development"]
-    container_name: fail2ban
-    hostname: fail2ban
-    cap_add:
-      - NET_ADMIN
-      - NET_RAW
-    build:
-      context: "./fail2ban"
-      dockerfile: Dockerfile
-    image: "fail2bancustom:v1.1.0"
-    network_mode: host
-    restart: "always"
-    volumes:
-      - "fail2banvol:/data"
-      - "traefiklogvol:/var/log/traefik:ro"
-    environment:
-      - "TZ=Universal"
-      - "F2B_LOG_TARGET=STDOUT"
-      - "F2B_LOG_LEVEL=INFO"
-      - "F2B_DB_PURGE_AGE=7d"
-      - "IPTABLES_MODE=nft"
-    depends_on:
-      - "reverse-proxy-development"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f https://traefik.myserver.com:8082/ping || exit 1"]
+      interval: 30s
+      timeout: 30s
+      retries: 3
+      start_period: 20s
 
-  fail2ban-production:
-    profiles: ["production"]
-    container_name: fail2ban
-    hostname: fail2ban
-    cap_add:
-      - NET_ADMIN
-      - NET_RAW
-    build:
-      context: "./fail2ban"
-      dockerfile: Dockerfile
-    image: "fail2bancustom:v1.1.0"
-    network_mode: host
-    restart: "always"
-    volumes:
-      - "fail2banvol:/data"
-      - "traefiklogvol:/var/log/traefik:ro"
-    environment:
-      - "TZ=Universal"
-      - "F2B_LOG_TARGET=STDOUT"
-      - "F2B_LOG_LEVEL=INFO"
-      - "F2B_DB_PURGE_AGE=7d"
-      - "IPTABLES_MODE=nft"
-    depends_on:
-      - "reverse-proxy-production"
+  # fail2ban-development:
+  #   profiles: ["development"]
+  #   container_name: fail2ban
+  #   hostname: fail2ban
+  #   cap_add:
+  #     - NET_ADMIN
+  #     - NET_RAW
+  #   build:
+  #     context: "./fail2ban"
+  #     dockerfile: Dockerfile
+  #   image: "fail2bancustom:v1.1.0"
+  #   network_mode: host
+  #   restart: "always"
+  #   volumes:
+  #     - "fail2banvol:/data"
+  #     - "traefiklogvol:/var/log/traefik:ro"
+  #   environment:
+  #     - "TZ=Universal"
+  #     - "F2B_LOG_TARGET=STDOUT"
+  #     - "F2B_LOG_LEVEL=INFO"
+  #     - "F2B_DB_PURGE_AGE=7d"
+  #     - "IPTABLES_MODE=nft"
+  #   depends_on:
+  #     reverse-proxy-development:
+  #       condition: service_healthy
 
+  # fail2ban-production:
+  #   profiles: ["production"]
+  #   container_name: fail2ban
+  #   hostname: fail2ban
+  #   cap_add:
+  #     - NET_ADMIN
+  #     - NET_RAW
+  #   build:
+  #     context: "./fail2ban"
+  #     dockerfile: Dockerfile
+  #   image: "fail2bancustom:v1.1.0"
+  #   network_mode: host
+  #   restart: "always"
+  #   volumes:
+  #     - "fail2banvol:/data"
+  #     - "traefiklogvol:/var/log/traefik:ro"
+  #   environment:
+  #     - "TZ=Universal"
+  #     - "F2B_LOG_TARGET=STDOUT"
+  #     - "F2B_LOG_LEVEL=INFO"
+  #     - "F2B_DB_PURGE_AGE=7d"
+  #     - "IPTABLES_MODE=nft"
+  #   depends_on:
+  #     reverse-proxy-production:
+  #       condition: service_healthy
 
   whoami-development:
     profiles: ["development"]
@@ -188,15 +206,14 @@ services:
     environment:
       - "TZ=Universal"
     depends_on:
-      - "reverse-proxy-development"
+      reverse-proxy-development:
+        condition: service_healthy
 
   app1-development:
     profiles: ["development"]
     build:
       context: "./app1"
       dockerfile: Dockerfile
-      args:
-        virtual_host: "myserver.com"
     image: "nginximg:1.27.3-bookworm"
     container_name: "container-app1-development"
     restart: "always"
@@ -220,20 +237,19 @@ services:
       traefik.http.routers.app1-https.entryPoints: "web-secure"
       traefik.http.routers.app1-https.tls: true
       traefik.http.routers.app1-https.tls.domains[0].main: "myserver.com"
-      traefik.http.routers.app1-https.tls.certresolver: "myresolver"
+      traefik.http.routers.app1-https.tls.certresolver: myresolver
       traefik.http.routers.app1-https.service: "app1-development-myproject"
     environment:
       - "TZ=Universal"
     depends_on:
-      - "reverse-proxy-development"
+      reverse-proxy-development:
+        condition: service_healthy
 
   app1-production:
     profiles: ["production"]
     build:
       context: "./app1"
       dockerfile: Dockerfile
-      args:
-        virtual_host: "myserver.com"
     image: "nginximg:1.27.3-bookworm"
     container_name: "container-app1-production"
     restart: "always"
@@ -256,15 +272,14 @@ services:
     environment:
       - "TZ=Universal"
     depends_on:
-      - "reverse-proxy-production"
+      reverse-proxy-production:
+        condition: service_healthy
 
   app2-development:
     profiles: ["development"]
     build:
       context: "./app2"
       dockerfile: Dockerfile
-      args:
-        virtual_host: "demo1.myserver.com"
     image: "nginximg2:1.27.3-bookworm"
     container_name: "container-app2-development"
     restart: "always"
@@ -288,20 +303,19 @@ services:
       traefik.http.routers.app2-https.entryPoints: "web-secure"
       traefik.http.routers.app2-https.tls: true
       traefik.http.routers.app2-https.tls.domains[0].main: "demo1.myserver.com"
-      traefik.http.routers.app2-https.tls.certresolver: "myresolver"
+      traefik.http.routers.app2-https.tls.certresolver: myresolver
       traefik.http.routers.app2-https.service: "app2-development-myproject"
     environment:
       - "TZ=Universal"
     depends_on:
-      - "reverse-proxy-development"
+      reverse-proxy-development:
+        condition: service_healthy
 
   app2-production:
     profiles: ["production"]
     build:
       context: "./app2"
       dockerfile: Dockerfile
-      args:
-        virtual_host: "demo1.myserver.com"
     image: "nginximg2:1.27.3-bookworm"
     container_name: "container-app2-production"
     restart: "always"
@@ -324,4 +338,5 @@ services:
     environment:
       - "TZ=Universal"
     depends_on:
-      - "reverse-proxy-production"
+      reverse-proxy-production:
+        condition: service_healthy

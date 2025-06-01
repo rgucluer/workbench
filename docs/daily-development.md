@@ -9,6 +9,18 @@ ssh-add ~/.ssh/vmuserkey
 
 ## Switch to development mode
 
+## Run Multipass
+```bash
+multipass start <vm_instance_name>
+```
+
+## List Virtual Machine
+```bash
+multipass list
+```
+Note the IP of the Virtual Machine.
+
+
 ### Edit /etc/hosts file. 
 Enter IP address of Virtual Machine for your development domains
 
@@ -23,16 +35,11 @@ Enter IP address of Virtual Machine for your development domains
 ### Edit dockerfiles/.env file
 
 Uncomment development row, comment out production row.
-```ini
+```
 COMPOSE_PROJECT_NAME="myproject"
 COMPOSE_FILE="compose.yml"
 COMPOSE_PROFILES="development"
 # COMPOSE_PROFILES="production"
-```
-
-## Run Multipass
-```bash
-multipass start <vm_instance_name>
 ```
 
 ### Change content
@@ -73,4 +80,4 @@ multipass stop <vm_instance_name>
 
 -----
 
-If you want deploy changes to production, read [Dswebdocs Workbench daily usage as production environment](docs/daily-production.md).
+If you want deploy changes to production, read [Dswebdocs Workbench daily usage as production environment](daily-production.md).

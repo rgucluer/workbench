@@ -3,6 +3,8 @@
 ### Copy inventory.example file as inventory
 ```bash
 cd <workbench_directory>/ansible
+```
+```bash
 cp inventory.example inventory
 ```
 
@@ -72,7 +74,7 @@ users:
     .....
     # Enter the public ssh key below. Copy value from ~/.ssh/vmuserkey.pub 
     ssh_authorized_keys:
-    - paste_value_here
+    - "paste_value_here"
 .....
 ```
 
@@ -95,6 +97,6 @@ Mount a local directory to the Virtual Machine
 ```bash
 multipass mount --gid-map 1000:1000 --uid-map 1000:1000 --type=classic <workbench_directory>/dockerfiles dwvm:/home/vmuser/dockerfiles
 ```
-The first number 1000 in 1000:1000 is my user id and group id on Controller Pc. You can see your user id, and group id with the **id** command in a terminal on Controller Pc. If your user id, and group id is different than 1000, then enter that id instead of 1000.
+The 1000:1000 is user id and group id on Controller Pc. You can see your user id, and group id with the **id** command in a terminal on Controller Pc. If your user id, and group id is different than 1000, then enter that id instead of 1000.
 
-Back to [Development Environment](install-dev-2404.md#install-canonical-multipass)
+Back to [Development Environment](install-dev-2404.md#docker-compose-settings)

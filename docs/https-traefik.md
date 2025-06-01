@@ -46,7 +46,7 @@ Copy the following to a text editor. Change values to match your setup. Copy all
 HETZNER_API_KEY_FILE="my_dns_provider_api_key.txt" \
 lego --email "my_email@myserver.com"  \
 --server=https://acme-v02.api.letsencrypt.org/directory \
---dns <my_dns_provider> \
+--dns <my_dns_provider_code> \
 --accept-tos \
 --dns.resolvers "<my_dns_provider_dns_server_1>" \
 --dns.resolvers "<my_dns_provider_dns_server_2>" \
@@ -92,6 +92,20 @@ Uncomment domain names in /etc/hosts
 <vagrant_vm_IP> traefik.<domain_name_1>
 ```
 
+### Set related values in ansible/inventory
+
+```yaml
+.....
+all:
+  vars:
+.....
+    docker_traefik_image_name: traefikcustom
+    docker_traefik_image_version: "v3.4.1.build.1"
+    traefik_directory_name: traefik
+.....
+
+```
+
 ### Set related values in dockerfiles/compose.yml for traefik
 
 ```yaml
@@ -100,18 +114,36 @@ services:
   reverse-proxy-development:
     profiles: ["development"]
     .....
-
+    # The image value must match with the values docker_traefik_image_name and docker_traefik_image_version in ansible/inventory file
+    image: "traefikcustom:v3.4.1.build.1"
     # Add your DNS Auth. API keys here.
     environment:
+      - "TZ=Universal"
       - "SERVICE_PROVIDER_API_KEY_FILE=/traefik/storage/my_dns_provider_api_key.txt"
-
+      - "EMAIL_FILE=/traefik/storage/traefik_email.txt"
+      - "DNS_FILE=/traefik/storage/traefik_dns.txt"      
+      - "PING_ADDRESS=https://traefik.myserver.com:8082/ping"
+    .....
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f https://traefik.myserver.com:8082/ping || exit 1"]
+    .....
 ```
+Create files 
+  - traefik_email.txt
+  - traefik_dns.txt
+
+in dockerfiles/traefik/storage. 
+
+Enter values:
+- Enter your registered email for LetsEncrypt in traefik_email.txt. 
+- Enter your DNS CLI flag name in my_dns_provider_api_key.txt . Read https://go-acme.github.io/lego/dns/
+
 
 ### Set related values in dockerfiles/traefik/traefik.yml
 
 Related values: 
   - Change "myserver.com" with your domain name.
-  - Change "my_dns_provider" with your dns provider. Read https://go-acme.github.io/lego/dns/ .
+  - Change "my_dns_provider_code" with your dns provider (CLI flag name). Read https://go-acme.github.io/lego/dns/ .
   - Change "my_email@myserver.com" with your email registered for Letsencrypt .
   - Enter <my_dns_provider_dns_server_1_IP>
   - Enter <my_dns_provider_dns_server_2_IP>
@@ -267,5 +299,5 @@ services:
 ```
 
 
-Back to [Development Environment](install-dev-2404.md)
+Back to [Development Environment](install-dev-2404.md#rebuild-the-project)
 

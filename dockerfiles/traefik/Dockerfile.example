@@ -1,9 +1,9 @@
 # Dockerfile for a custom Traefik image
 # Author: Recep GUCLUER
-FROM traefik:3.2.1
+FROM traefik:3.4.1
 
 # Install lego
-RUN apk update && apk add --no-cache lego
+RUN apk update && apk add --no-cache lego curl
 
 # Static Configuration
 COPY traefik.yml /etc/traefik/traefik.yml
@@ -22,3 +22,4 @@ EXPOSE 443
 EXPOSE 8080
 EXPOSE 8082
 
+HEALTHCHECK --interval="30s" --timeout="30s" --retries="3" CMD curl --fail "${PING_ADDRESS}" || exit 1

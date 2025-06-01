@@ -8,7 +8,7 @@
   become: true
 
 - name: Update apt repo and cache
-  ansible.builtin.apt: 
+  ansible.builtin.apt:
     update_cache: yes
     force_apt_get: no
     cache_valid_time: 300
@@ -45,15 +45,25 @@
 - name: Prune dangling images
   community.docker.docker_prune:
     images: true
-    builder_cache: true
+    builder_cache: false
 
-# Do not run this on Dev PC. Removes dockerfiles directory on target
+# # Do not run this on Dev PC. Removes dockerfiles directory on target
 # - name: Recursively remove directory
 #   ansible.builtin.file:
 #     state: absent
 #     path: "/home/{{ ansible_user }}/dockerfiles"
 #   when: (docker_profile == 'production') and (dir_data.stat.exists and dir_data.stat.isdir)
 #   become: true
+#
+# - name: Wait for a few seconds
+#   ansible.builtin.pause:
+#     seconds: "2"
+
+# # Check if dockerfiles directory exists
+# - name: Checking if a directory exists
+#   stat:
+#     path: /home/{{ ansible_user }}/dockerfiles
+#   register: dir_data
 
 # Create dockerfiles directory
 - name: Create a directory if it does not exist
@@ -118,17 +128,17 @@
     tag: "{{ docker_nginx_image_version_2 }}"
     push: false
 
-- name: Build fail2ban image
-  community.docker.docker_image:
-    name: "{{ docker_fail2ban_image_name }}"
-    build:
-      dockerfile: Dockerfile
-      path: "/home/{{ ansible_user }}/dockerfiles/{{ fail2ban_directory_name }}"
-    state: present
-    repository: "{{ docker_fail2ban_image_name}}:{{ docker_fail2ban_image_version }}"
-    source: build
-    tag: "{{ docker_fail2ban_image_version }}"
-    push: false
+# - name: Build fail2ban image
+#   community.docker.docker_image:
+#     name: "{{ docker_fail2ban_image_name }}"
+#     build:
+#       dockerfile: Dockerfile
+#       path: "/home/{{ ansible_user }}/dockerfiles/{{ fail2ban_directory_name }}"
+#     state: present
+#     repository: "{{ docker_fail2ban_image_name}}:{{ docker_fail2ban_image_version }}"
+#     source: build
+#     tag: "{{ docker_fail2ban_image_version }}"
+#     push: false
 
 - name: Build traefikcustom image
   community.docker.docker_image:

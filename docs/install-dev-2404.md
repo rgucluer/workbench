@@ -101,6 +101,14 @@ sudo apt install ansible -y
 sudo apt install git-all -y
 ```
 
+Set options for git:
+```bash
+git config --global user.name "John Doe"
+git config --global user.email myemail@emaildomain.com
+git config --global core.editor nano
+git config --list
+```
+
 ## Create a workspace directory if you don't have one
 
 ```bash

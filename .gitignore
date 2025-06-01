@@ -13,18 +13,6 @@ ansible/test*.yml
 dockerfiles/fail2ban/Dockerfile
 dockerfiles/fail2ban/jail.local
 
-# Gatsby
-dockerfiles/gatsby/.cache/
-dockerfiles/gatsby/node_modules/*
-dockerfiles/gatsby/public/*
-dockerfiles/gatsby/static/
-# dockerfiles/gatsby/Dockerfile
-dockerfiles/gatsby/gatsby-config.ts
-dockerfiles/gatsby/gatsby-config.js
-dockerfiles/gatsby/gatsby-node.js
-dockerfiles/gatsby/gatsby-ssr.js
-
-
 # Traefik
 dockerfiles/traefik/storage/
 !dockerfiles/traefik/storage/.gitignore
