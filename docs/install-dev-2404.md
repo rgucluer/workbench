@@ -150,6 +150,9 @@ ssh-add ~/.ssh/vmuserkey
 ## [Docker Compose Settings](docker-compose.md)
 Edit [Docker Compose Settings](docker-compose.md) to fit our setup.
 
+## [Edit Nginx config files](nginx-dev.md)
+Edit [Edit Nginx config files](nginx-dev.md) to fit our setup.
+
 ## Edit /etc/hosts file
 Add the following rows to the /etc/hosts file with a text editor. You must run the text editor with sudo privileges. virtual_machine_IP is the IP we noted before (multipass list).
 ```bash
@@ -157,10 +160,10 @@ sudo nano /etc/hosts
 ```
 Add the following rows to the file.
 ```txt
-<virtual_machine_IP> <domain_name_1>
 <virtual_machine_IP> demo1.<domain_name_1>
 <virtual_machine_IP> whoami.<domain_name_1>
 <virtual_machine_IP> traefik.<domain_name_1>
+<virtual_machine_IP> <domain_name_1>
 ```
 <kbd>CTRL</kbd> + <kbd>o</kbd> to Save.
 

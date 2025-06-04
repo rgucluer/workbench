@@ -22,7 +22,7 @@ users:
     lock_passwd: true
     # Enter the public ssh key below. Copy value from ~/.ssh/vmuserkey.pub 
     ssh_authorized_keys:
-    - paste_value_here
+    - "paste_value_here"
     sudo: ['ALL=(ALL) NOPASSWD:ALL']
 
 locale: false

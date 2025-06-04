@@ -8,7 +8,6 @@ prod_servers:
       ansible_connection: ssh
       ansible_user: produser
       ansible_become: true
-      become_method: sudo
       ansible_ssh_private_key_file: "/home/local1/.ssh/produserkey"
       docker_profile: production
 
@@ -20,17 +19,15 @@ dev_servers:
       ansible_connection: ssh
       ansible_user: vmuser
       ansible_become: true
-      become_method: sudo
       ansible_ssh_private_key_file: "/home/local1/.ssh/vmuserkey"
       docker_profile: development
 
 controller_pc:
   hosts:
-    local:
+    localhost:
       ansible_connection: local
       ansible_user: local1
       ansible_become: true
-      become_method: sudo
       docker_profile: local
 
 all:

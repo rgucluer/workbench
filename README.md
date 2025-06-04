@@ -19,12 +19,12 @@ May not be suitable for production use.
 
 -----
 
-### Other operations:
+## Other operations:
 - Letsencrypt: [Certificate related operations](docs/lego-certs.md)
 
 -----
 
-### LICENSE
+## LICENSE
 
 Copyright 2023-2025 Recep GÜÇLÜER rgucluer@gmail.com
 

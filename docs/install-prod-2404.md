@@ -195,7 +195,6 @@ prod_servers:
       ansible_connection: ssh
       ansible_user: <server_user>
       ansible_become: true
-      become_method: sudo
       ansible_ssh_private_key_file: "/home/<server_user>/.ssh/<prod_ssh_key>"
       docker_profile: production
 ```
