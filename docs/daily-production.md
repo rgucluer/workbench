@@ -54,3 +54,26 @@ Check
 - https://traefik.<domain_name_1>:8080/dashboard/
 
 ( Press [Shift]+[F5] if necessary )
+
+## If you just want to stop and start services
+
+### Stop Docker Compose Services
+```bash
+cd <workbench_full_path>/ansible
+```
+```bash
+ansible-playbook prod-stop.yml
+```
+BECOME password is for VPS user .
+
+
+### Start Docker Compose Services
+```bash
+cd <workbench_full_path>/ansible
+```
+```bash
+ansible-playbook prod-start.yml
+```
+BECOME password is for VPS user .
+
+You can also ssh to server, and use docker compose cli.

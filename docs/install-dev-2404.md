@@ -281,7 +281,18 @@ If same page comes, wait for a few seconds and hit <kbd>SHIFT</kbd>+<kbd>F5</kbd
 
 Development environment installation finished.
 
-### Stop Virtual Machine
+### End of day
+
+#### Stop Docker Compose Services
+```bash
+cd <workbench_full_path>/ansible
+```
+```bash
+ansible-playbook dev-stop.yml
+```
+Will ask "BECOME password" for Virtual Machine user.
+
+#### Stop Virtual Machine
 
 ```bash
 multipass stop <vm_instance_name>

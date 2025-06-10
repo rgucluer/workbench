@@ -52,8 +52,18 @@ After modification, wait a few seconds.
 Check, update the page (Shift + F5):
 https://<domain_name_1>
 
-## You can rebuild the Dswebdocs Workbench:
+### Start Docker Compose Services
+```bash
+cd <workbench_full_path>/ansible
+```
+```bash
+ansible-playbook dev-start.yml
+```
+BECOME password is for virtual machine user vmuser.
 
+
+### You can rebuild the Dswebdocs Workbench:
+If you make changes to docker compose service structure, you can do a rebuild.
 ```bash
 cd <workbench_full_path>/ansible
 ```
@@ -73,6 +83,18 @@ Check
 ( Press [Shift]+[F5] if necessary )
 
 ## End of the day
+First stop Docker Compose services, then stop the virtual machine.
+
+### Stop Docker Compose Services
+```bash
+cd <workbench_full_path>/ansible
+```
+```bash
+ansible-playbook dev-stop.yml
+```
+BECOME password is for virtual machine user vmuser.
+
+
 ### Stop Virtual Machine
 ```bash
 multipass stop <vm_instance_name>

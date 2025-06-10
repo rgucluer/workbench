@@ -1,0 +1,12 @@
+---
+
+# Stop Docker Compose Services
+- name: Stop Docker Compose Services
+  hosts: development
+  become: true
+  gather_facts: yes
+
+  tasks:
+    - include_tasks: tasks/dockerstop.yml
+
+...

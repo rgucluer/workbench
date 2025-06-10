@@ -1,0 +1,12 @@
+---
+
+# Start Docker Compose Services
+- name: Start Docker Compose Services
+  hosts: production
+  become: true
+  gather_facts: yes
+
+  tasks:
+    - include_tasks: tasks/dockerstart.yml
+
+...

@@ -1,0 +1,17 @@
+---
+
+# Check if dockerfiles directory exists
+- name: Checking if a directory exists
+  stat:
+    path: /home/{{ ansible_user }}/dockerfiles
+  register: dir_data
+
+- name: Stop existing services
+  community.docker.docker_compose_v2:
+    project_src: "/home/{{ ansible_user }}/dockerfiles"
+    state: "stopped"
+    profiles: [ "{{ docker_profile }}" ]
+
+  when: dir_data.stat.exists and dir_data.stat.isdir
+  become: true
+  ignore_errors: yes
