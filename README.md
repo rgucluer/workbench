@@ -7,6 +7,8 @@ Developed on Ubuntu 24.04, so these instructions will work on  Ubuntu 24.04. Not
 
 May not be suitable for production use.
 
+Current status: Development is stopped. https://github.com/coollabsio/coolify project offers a better solution then Dswebdocs Workbench, so this project stays as a public archive. 
+
 -----
 
 ## Installation:
